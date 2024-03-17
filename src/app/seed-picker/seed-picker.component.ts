@@ -26,8 +26,22 @@ export class SeedPickerComponent implements OnInit {
     this.updateSeedAmount();
   }
 
-  getWidth(): number{
-    return Math.max(this.selectedSeeds.length, this.getSeedOptions().length, 4) * 50 + 60
+  getMainStyle(): Record<string,any>{
+    if(this.growingPlantsService.selectedDirt == null){
+      return {
+        "opacity": 0,
+        "width": 0,
+        "left": "-100000px",
+        "top": "-1000px"
+      }
+    }
+
+    return {
+      "opacity": 1,
+      "left": this.growingPlantsService.getDirtPosition(this.growingPlantsService.selectedDirt)[0] + 30 + "px",
+      "top": this.growingPlantsService.getDirtPosition(this.growingPlantsService.selectedDirt)[1] - 30  + "px",
+      "width": (Math.max(this.selectedSeeds.length, this.getSeedOptions().length, 4) * 50 + 60) + "px"
+    }
   }
   
   getAmount(seedInfo: Seed): number{
@@ -67,14 +81,14 @@ export class SeedPickerComponent implements OnInit {
     var resultPlant = combinationResult as PlantData;
     return {
       top: "Plant",
-      bottom: resultPlant.name, 
+      bottom: resultPlant.staticInfo.name, 
       tooltip: "You have tried this combination of seeds before, and it resulted in a viable plant.",
       color: "#8F8"
     }
   }
 
   getMaxSeedAmount(): number{
-    return 4
+    return 6
   }
 
   changeSeedAmount(increaseSeeds: boolean){
@@ -132,11 +146,21 @@ export class SeedPickerComponent implements OnInit {
       return;
     }
 
+    if(this.growingPlantsService.selectedDirt == null || this.growingPlantsService.getPlantFromDirt(this.growingPlantsService.selectedDirt) != null){
+      return;
+    }
+
     var flushedSeedCombination = this.selectedSeeds.filter(seed => seed != null) as Array<SeedData>;
-    this.growingPlantsService.makePlant(combinationResult != "Untried" ? combinationResult : null, this.almanacTrackerService.combinationToPattern(flushedSeedCombination))
+    this.growingPlantsService.makePlant(
+      combinationResult != "Untried" ? combinationResult : null, 
+      this.almanacTrackerService.combinationToPattern(flushedSeedCombination),
+      this.growingPlantsService.selectedDirt
+    )
     
     this.seedCommbinationService.consumeSeeds(this.selectedSeeds);
     this.clearSeeds();
+
+    this.growingPlantsService.selectedDirt = null;
   }
 
   getSeedOptionStyle(seedInfo: Seed): Record<string, any>{

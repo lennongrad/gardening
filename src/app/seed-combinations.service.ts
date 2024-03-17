@@ -12,10 +12,20 @@ export class SeedCombinationsService {
     seedData.forEach(seed => {
       this.seeds.push({seed: seed, amount: 0, discovered: false})
     })
+    /*
     this.gainSeed(seedData[0], 3)
     this.gainSeed(seedData[1], 3)
     this.gainSeed(seedData[2], 3)
     this.gainSeed(seedData[3], 3)
+    */
+  }
+
+  getSeedByID(id: string): SeedData | null {
+    var matchingSeeds = seedData.filter(seed => seed.id == id)
+    if(matchingSeeds.length == 1){
+      return matchingSeeds[0]
+    }
+    return null;
   }
 
   gainSeed(seedType: SeedData, amount: number){

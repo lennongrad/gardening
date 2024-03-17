@@ -1,4 +1,4 @@
-<div id="main" [style.width]="getWidth() + 'px'">
+<div id="main" [ngStyle]="getMainStyle()">
     <div id="seed-list">
         <button class="seed-button" [style]="getSeedOptionStyle(seedInfo)" *ngFor="let seedInfo of getSeedOptions()" (click)="selectSeed(seedInfo)">
             <img [src]="'assets/items/' + seedInfo.seed.icon">

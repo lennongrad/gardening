@@ -18,27 +18,32 @@ export class AlmanacTrackerService {
   initializePlantData(){
     staticPlantData.forEach(data => {
       var pattern = ""
-      if(data.overwritePattern != null){
-        pattern = data.overwritePattern
-      } else {
-        var isRepeat = true
-        while(isRepeat){
-          for(var i = 0; i < data.patternSize; i++){
-            pattern += seedData[Math.floor(Math.random() * seedData.length)].id
+      
+      var isRepeat = true
+      while(isRepeat){
+        var availableSeeds = []
+        for(var i = 0; i < data.patternSeeds.length; i++){
+          var matchingSeeds = seedData.filter(x => x.id == data.patternSeeds.charAt(i))
+          if(matchingSeeds.length == 1){
+            availableSeeds.push(matchingSeeds[0])
           }
-
-          isRepeat = this.plantList.filter(plant => plant.pattern == pattern).length >= 1
         }
+
+        for(var i = 0; i < data.patternSize; i++){
+          pattern += availableSeeds[Math.floor(Math.random() * availableSeeds.length)].id
+        }
+
+        isRepeat = this.plantList.filter(plant => plant.pattern == pattern).length >= 1
       }
 
       this.plantList.push({
-        id: data.id,
-        name: data.name,
+        staticInfo: data,
         pattern: pattern,
         growthCycles: data.patternSize * 10 + (data.growthCyclesAdjustment ? data.growthCyclesAdjustment : 0),
         discovered: false
       })
     })
+
     console.log(this.plantList);
   }
 
@@ -74,7 +79,7 @@ export class AlmanacTrackerService {
 
     return "Untried"
   }
-  
+
   submitFailedSeedPattern(seedCombination: string){
     this.failedCombinations.add(seedCombination);
   }

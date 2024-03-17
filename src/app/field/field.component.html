@@ -1,7 +1,17 @@
-<div id="plant-placeholder">
-    <div class="plant-instance" *ngFor="let plant of getGrowingPlants()">
-        <b>{{plant.plantName}}</b> ({{plant.cycles}} / {{plant.maxCycles}}) 
-        <span class="water" *ngIf="plant.waterCycles == 0 && !plant.isInviable && plant.cycles != plant.maxCycles" (click)="waterPlant(plant)">Water</span>
-        <span class="harvest" *ngIf="plant.isInviable || plant.cycles == plant.maxCycles" (click)="harvestPlant(plant)">Harvest</span>
+<div id="field" style="background-image: url(assets/grass.jpg)" [style]="getFieldStyle()" oncontextmenu="return false;"
+ (mousedown)="onMouseDown($event)" (window:mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+    <div id="background" (mousedown)="onBackgroundMouseDown()"></div>
+    <div id="dirt-spots">
+        <div class="dirt" *ngFor="let dirt of dirtSpots" [ngStyle]="getDirtStyle(dirt)" [class.selected-dirt]="dirt == getSelectedDirt()">
+            <div class="dirt-background-blurry"  style="background-image: url(assets/dirt.jpg)"></div>
+            <div class="dirt-background"  style="background-image: url(assets/dirt.jpg)"
+                (click)="onMouseDownDirt(dirt)"  (mouseenter)="onMouseEnterDirt(dirt)" (mouseexit)="onMouseExitDirt(dirt)"></div>
+            <app-plant [plant]="getPlant(dirt)"></app-plant>
+        </div>
+    </div>
+    <div id="prospective-dirt-spots">
+        <div class="prospective-dirt" *ngFor="let dirt of getProspectiveDirtSpots()" [ngStyle]="getDirtStyle(dirt)" (click)="onMouseDownProspective(dirt)">
+            <div class="prospective-dirt-hover"></div>
+        </div>
     </div>
 </div>

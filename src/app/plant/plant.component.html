@@ -1,0 +1,5 @@
+<div class="plant-instance" *ngIf="plant != null">
+    <b>{{plant.plantName}}</b><br>({{plant.cycles}} / {{plant.maxCycles}})<br>
+    <span class="water" *ngIf="plant.waterCycles == 0 && !plant.isInviable && plant.cycles != plant.maxCycles" (click)="waterPlant()">Water</span>
+    <span class="harvest" *ngIf="plant.isInviable || plant.cycles == plant.maxCycles" (click)="harvestPlant()">Harvest</span>
+</div>
