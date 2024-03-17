@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { GrowingPlantsService } from '../growing-plants.service';
 import { Dirt, Plant, ProspectiveDirt } from 'src/interfaces/plant';
+import { SaveManagementService } from '../save-management.service';
 
 @Component({
   selector: 'app-field',
@@ -8,30 +9,16 @@ import { Dirt, Plant, ProspectiveDirt } from 'src/interfaces/plant';
   styleUrls: ['./field.component.less']
 })
 export class FieldComponent implements OnInit {
-  dirtSpots: Array<Dirt> = []
-  prospectiveDirtSpots: Array<ProspectiveDirt> = [];
   mouseIsDown = false;
 
-  constructor(private growingPlantsService: GrowingPlantsService) { 
+  constructor(
+    private growingPlantsService: GrowingPlantsService,
+    private saveManagementService: SaveManagementService) { 
     setInterval(() => {this.updateFrame()}, 10)
   }
 
   ngOnInit(): void {
-    this.addDirt(0,0)
-    /*
-    this.addDirt(1,0)
-    this.addDirt(0,1)
-    this.addDirt(-1,0)
-    this.addDirt(0,-1)
-    */
-
-    /*
-    for(var x = -10; x < 11; x++){
-      for(var y = -10; y < 11; y++){
-        this.addDirt(x,y)
-      }
-    }
-    */
+    this.saveManagementService.attemptLoad();
   }
 
   getFieldStyle(): Record<string, any>{
@@ -50,24 +37,6 @@ export class FieldComponent implements OnInit {
     }
   }
 
-  addDirt(x: number, y: number){
-    if(this.dirtSpots.some(dirt => dirt.x == x && dirt.y == y)){
-      return;
-    }
-
-    this.dirtSpots.push({id: this.dirtSpots.length, x: x, y: y})
-
-    this.prospectiveDirtSpots = []
-    var relativePositions = [[1,0], [0,1], [-1,0], [0,-1]]
-    this.dirtSpots.forEach(dirt => {
-      relativePositions.forEach(displacement => {
-        if(!this.prospectiveDirtSpots.concat(this.dirtSpots).some(otherSpot => otherSpot.x == dirt.x + displacement[0] && otherSpot.y == dirt.y + displacement[1])){
-          this.prospectiveDirtSpots.push({x: dirt.x + displacement[0], y: dirt.y + displacement[1]})
-        }
-      })
-    })
-  }
-
   getPlant(dirt: Dirt): Plant | null{
     return this.growingPlantsService.getPlantFromDirt(dirt);
   }
@@ -76,8 +45,12 @@ export class FieldComponent implements OnInit {
     return this.growingPlantsService.selectedDirt;
   }
 
+  getDirtSpots(): Array<Dirt>{
+    return this.growingPlantsService.dirtSpots
+  }
+
   getProspectiveDirtSpots(): Array<ProspectiveDirt>{
-    return this.prospectiveDirtSpots
+    return this.growingPlantsService.prospectiveDirtSpots
   }
 
   updateFrame(){
@@ -96,7 +69,7 @@ export class FieldComponent implements OnInit {
   }
 
   onMouseDownProspective(dirt: ProspectiveDirt){
-    this.addDirt(dirt.x, dirt.y);
+    this.growingPlantsService.addDirt(dirt.x, dirt.y);
     this.growingPlantsService.selectedDirt = null;
   }
 
@@ -136,6 +109,15 @@ export class FieldComponent implements OnInit {
     if(this.mouseIsDown){
       this.growingPlantsService.xOffset += event.movementX
       this.growingPlantsService.yOffset += event.movementY
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyPress(event: KeyboardEvent){
+    if(event.code == "KeyC"){
+      if(confirm("Clear all save data?")){
+        this.saveManagementService.clearData();
+      }
     }
   }
 

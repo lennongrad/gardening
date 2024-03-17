@@ -10,19 +10,28 @@ export interface StaticPlantData {
 export interface PlantData {
     staticInfo: StaticPlantData,
     pattern: string,
-    discovered: boolean,
-    growthCycles: number
+    discovered: boolean
+}
+
+export interface SaveablePlantData{
+    plantDataID: string,
+    pattern: string,
+    discovered: boolean
 }
 
 export interface Plant {
-    plantName: string,
     dirt: Dirt,
     plantData: PlantData | null,
     plantedPattern: string,
     cycles: number,
     waterCycles: number
-    maxCycles: number,
-    isInviable: boolean
+}
+
+export interface SaveablePlant{
+    dirtID: number,
+    plantedPattern: string,
+    cycles: number,
+    waterCycles: number
 }
 
 export interface ProspectiveDirt{
@@ -31,6 +40,12 @@ export interface ProspectiveDirt{
 }
 
 export interface Dirt{
+    id: number,
+    x: number,
+    y: number
+}
+
+export interface SaveableDirt{
     id: number,
     x: number,
     y: number

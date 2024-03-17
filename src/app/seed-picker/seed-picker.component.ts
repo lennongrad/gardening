@@ -152,7 +152,6 @@ export class SeedPickerComponent implements OnInit {
 
     var flushedSeedCombination = this.selectedSeeds.filter(seed => seed != null) as Array<SeedData>;
     this.growingPlantsService.makePlant(
-      combinationResult != "Untried" ? combinationResult : null, 
       this.almanacTrackerService.combinationToPattern(flushedSeedCombination),
       this.growingPlantsService.selectedDirt
     )

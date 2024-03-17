@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { flush } from '@angular/core/testing';
 import { seedData, staticPlantData } from 'src/data/plants';
-import { PlantData } from 'src/interfaces/plant';
+import { PlantData, SaveablePlantData } from 'src/interfaces/plant';
 import { Seed, SeedData } from 'src/interfaces/seed';
+import { SaveManagementService } from './save-management.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlmanacTrackerService {
+  saveManagementService!: SaveManagementService;
+
   plantList: Array<PlantData> = []
   failedCombinations: Set<string> = new Set<string>()
 
-  constructor() { 
-    this.initializePlantData();
-  }
+  constructor() {  }
 
   initializePlantData(){
     staticPlantData.forEach(data => {
@@ -39,7 +40,6 @@ export class AlmanacTrackerService {
       this.plantList.push({
         staticInfo: data,
         pattern: pattern,
-        growthCycles: data.patternSize * 10 + (data.growthCyclesAdjustment ? data.growthCyclesAdjustment : 0),
         discovered: false
       })
     })
@@ -87,5 +87,35 @@ export class AlmanacTrackerService {
   submitFailedSeedCombination(seedCombination: Array<SeedData | null>){
     var flushedSeedCombination = seedCombination.filter(seed => seed != null) as Array<SeedData>;
     this.submitFailedSeedPattern(this.combinationToPattern(flushedSeedCombination));    
+  }
+
+  onNoSave(){
+    this.initializePlantData();
+  }
+
+  onLoadSave(savedPlantData: Array<SaveablePlantData>, savedFailedPatterns: Array<string>): boolean{
+    this.initializePlantData()
+
+    var missingPlantData = false
+    savedPlantData.forEach(plantData => {
+      var matchingPlantData = this.plantList.filter(x => x.staticInfo.id == plantData.plantDataID)
+      if(matchingPlantData.length == 1){
+        matchingPlantData[0].discovered = plantData.discovered
+        matchingPlantData[0].pattern = plantData.pattern
+      } else {
+        missingPlantData = true
+      }
+    })
+
+    savedFailedPatterns.forEach(pattern => {
+      if(!this.plantList.some(x => x.pattern == pattern)){
+        this.failedCombinations.add(pattern)
+      }
+    })
+
+    if(missingPlantData){
+      return false;
+    }
+    return true;
   }
 }

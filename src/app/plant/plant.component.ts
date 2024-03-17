@@ -15,6 +15,27 @@ export class PlantComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getPlantName(): string{
+    if(this.plant == null){
+      return "";
+    }
+    return this.growingPlantsService.getPlantName(this.plant);
+  }
+
+  getMaxCycles(): number{
+    if(this.plant == null){
+      return 0;
+    }
+    return this.growingPlantsService.getMaxCycles(this.plant);
+  }
+
+  isInviable(): boolean{
+    if(this.plant == null){
+      return true;
+    }
+    return this.growingPlantsService.isInviable(this.plant)
+  }
+
   waterPlant(){
     if(this.plant != null){
       this.plant.waterCycles += 5

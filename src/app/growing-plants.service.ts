@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Dirt, Plant, PlantData, ProspectiveDirt } from 'src/interfaces/plant';
+import { Dirt, Plant, PlantData, ProspectiveDirt, SaveableDirt, SaveablePlant } from 'src/interfaces/plant';
 import { AlmanacTrackerService } from './almanac-tracker.service';
 import { SeedCombinationsService } from './seed-combinations.service';
+import { SaveManagementService } from './save-management.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GrowingPlantsService {
+  saveManagementService!: SaveManagementService;
+
+  dirtSpots: Array<Dirt> = []
+  prospectiveDirtSpots: Array<ProspectiveDirt> = [];
   plants: Array<Plant> = []
 
   hoveredDirt: Dirt | null = null;
@@ -19,8 +24,91 @@ export class GrowingPlantsService {
   dirtHeight: number = 100
   blocksAwayAllowed: number = 10
 
-  constructor(private alamancTrackerService: AlmanacTrackerService, private seedCombinationService: SeedCombinationsService) { 
+  constructor(
+    private alamancTrackerService: AlmanacTrackerService, 
+    private seedCombinationService: SeedCombinationsService) { 
     setInterval(() => {this.growthTick()}, 250)
+  }
+
+  onLoadSave(loadedDirt: Array<SaveableDirt>, loadedPlants: Array<SaveablePlant>): boolean{
+    if(loadedDirt.length == 0){
+      return false;
+    }
+
+    loadedDirt.forEach(dirt => {
+      this.dirtSpots.push({id: dirt.id, x: dirt.x, y: dirt.y})
+    })
+    this.redefineProspective()
+
+    loadedPlants.forEach(plant => {
+      this.plants.push({
+        dirt: this.dirtSpots.filter(x => x.id == plant.dirtID)[0],
+        plantData: this.alamancTrackerService.checkSeedPattern(plant.plantedPattern),
+        plantedPattern: plant.plantedPattern,
+        cycles: plant.cycles,
+        waterCycles: plant.waterCycles
+      })
+    })
+    return true;
+  }
+
+  onNoSave(){
+    for(var x = -this.blocksAwayAllowed; x <= this.blocksAwayAllowed; x++){
+      for(var y = -this.blocksAwayAllowed; y <= this.blocksAwayAllowed; y++){
+        this.prospectiveDirtSpots.push({x: x, y:y})
+      }
+    }
+    //this.addDirt(0,0)
+
+    /*
+    this.addDirt(1,0)
+    this.addDirt(0,1)
+    this.addDirt(-1,0)
+    this.addDirt(0,-1)
+    */
+
+    /*
+    for(var x = -10; x < 11; x++){
+      for(var y = -10; y < 11; y++){
+        this.addDirt(x,y)
+      }
+    }
+    */
+  }
+
+  addDirt(x: number, y: number){
+    if(this.dirtSpots.some(dirt => dirt.x == x && dirt.y == y)){
+      return;
+    }
+
+    this.dirtSpots.push({id: this.dirtSpots.length, x: x, y: y})
+    this.redefineProspective()
+  }
+
+  getPlantName(plant: Plant): string{
+    if(plant.cycles < this.getMaxCycles(plant) / 2 && (plant.plantData == null || !plant.plantData.discovered)){
+      return "Sprout"
+    }
+    if(plant.plantData == null){
+      return "Inviable"
+    }
+    return plant.plantData.staticInfo.name
+  }
+
+  isInviable(plant: Plant): boolean{
+    return (plant.cycles >= this.getMaxCycles(plant) / 2) && plant.plantData == null
+  }
+
+  redefineProspective(){
+    this.prospectiveDirtSpots = []
+    var relativePositions = [[1,0], [0,1], [-1,0], [0,-1]]
+    this.dirtSpots.forEach(dirt => {
+      relativePositions.forEach(displacement => {
+        if(!this.prospectiveDirtSpots.concat(this.dirtSpots).some(otherSpot => otherSpot.x == dirt.x + displacement[0] && otherSpot.y == dirt.y + displacement[1])){
+          this.prospectiveDirtSpots.push({x: dirt.x + displacement[0], y: dirt.y + displacement[1]})
+        }
+      })
+    })
   }
 
   getPlantFromDirt(dirt: Dirt): Plant | null{
@@ -32,21 +120,14 @@ export class GrowingPlantsService {
     return matchingPlants[0]
   }
 
-  makePlant(plantData: PlantData | null, pattern: string, dirt: Dirt){
+  makePlant(pattern: string, dirt: Dirt){
     var newPlant: Plant = {
-      plantName: "Sprout",
       dirt: dirt,
-      plantData: plantData, 
+      plantData: this.alamancTrackerService.checkSeedPattern(pattern), 
       plantedPattern: pattern, 
       cycles: 0, 
-      waterCycles: 0,
-      maxCycles: pattern.length * 10,
-      isInviable: false
+      waterCycles: 0
     };
-    
-    if(plantData != null){
-      newPlant.maxCycles = plantData.growthCycles
-    }
 
     this.plants.push(newPlant);
   }
@@ -54,6 +135,7 @@ export class GrowingPlantsService {
   harvestPlant(plant: Plant){
     this.plants = this.plants.filter(x => x != plant)
 
+    console.log(plant)
     if(plant.plantData == null){
       this.alamancTrackerService.submitFailedSeedPattern(plant.plantedPattern);
     } else {
@@ -65,6 +147,13 @@ export class GrowingPlantsService {
       })
       plant.plantData.discovered = true
     } 
+  }
+
+  getMaxCycles(plant: Plant): number{
+    if(plant.plantData != null){
+      return plant.plantData.staticInfo.patternSize * 10 + (plant.plantData.staticInfo.growthCyclesAdjustment ? plant.plantData.staticInfo.growthCyclesAdjustment : 0)
+    }
+    return plant.plantedPattern.length * 10
   }
 
   getDirtPosition(dirt: Dirt | ProspectiveDirt): [number, number]{
@@ -84,21 +173,12 @@ export class GrowingPlantsService {
     }
 
     this.plants.forEach(plant => {
-      if(plant.cycles < plant.maxCycles && !plant.isInviable && plant.waterCycles > 0){
+      if(plant.cycles < this.getMaxCycles(plant) && !this.isInviable(plant) && plant.waterCycles > 0){
         plant.waterCycles -= 1
         plant.cycles += 1
-        
-        if(plant.plantName == "Sprout" && plant.cycles >= plant.maxCycles / 2) {
-          var associatedPlant = this.alamancTrackerService.checkSeedPattern(plant.plantedPattern);
-          if(associatedPlant == null){
-            plant.isInviable = true
-            plant.plantName = "Inviable"
-          } else {
-            plant.plantData = associatedPlant
-            plant.plantName = plant.plantData.staticInfo.name
-          }
-        }
       }
     })
+
+    this.saveManagementService.saveGame()
   }
 }

@@ -2,7 +2,7 @@
  (mousedown)="onMouseDown($event)" (window:mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
     <div id="background" (mousedown)="onBackgroundMouseDown()"></div>
     <div id="dirt-spots">
-        <div class="dirt" *ngFor="let dirt of dirtSpots" [ngStyle]="getDirtStyle(dirt)" [class.selected-dirt]="dirt == getSelectedDirt()">
+        <div class="dirt" *ngFor="let dirt of getDirtSpots()" [ngStyle]="getDirtStyle(dirt)" [class.selected-dirt]="dirt == getSelectedDirt()">
             <div class="dirt-background-blurry"  style="background-image: url(assets/dirt.jpg)"></div>
             <div class="dirt-background"  style="background-image: url(assets/dirt.jpg)"
                 (click)="onMouseDownDirt(dirt)"  (mouseenter)="onMouseEnterDirt(dirt)" (mouseexit)="onMouseExitDirt(dirt)"></div>

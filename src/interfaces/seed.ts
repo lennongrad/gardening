@@ -9,3 +9,9 @@ export interface Seed {
     amount: number,
     discovered: boolean
 }
+
+export interface SaveableSeed{
+    seedID: string,
+    amount: number,
+    discovered: boolean
+}

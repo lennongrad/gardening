@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { seedData } from 'src/data/plants';
-import { SeedData, Seed } from 'src/interfaces/seed';
+import { SeedData, Seed, SaveableSeed } from 'src/interfaces/seed';
+import { SaveManagementService } from './save-management.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SeedCombinationsService {
+  saveManagementService!: SaveManagementService;
+
   seeds: Array<Seed> = []
 
   constructor() {
-    seedData.forEach(seed => {
-      this.seeds.push({seed: seed, amount: 0, discovered: false})
-    })
     /*
     this.gainSeed(seedData[0], 3)
     this.gainSeed(seedData[1], 3)
@@ -51,5 +51,34 @@ export class SeedCombinationsService {
 
   getSeedData(): Array<Seed>{
     return this.seeds;
+  }
+
+  onNoSave(){
+    this.seeds = []
+    seedData.forEach(seed => {
+      this.seeds.push({seed: seed, amount: 0, discovered: false})
+    })
+  }
+
+  onLoadSave(savedSeeds: Array<SaveableSeed>): boolean{
+    seedData.forEach(seed => {
+      this.seeds.push({seed: seed, amount: 0, discovered: false})
+    })
+
+    var unknownSeed = false
+    savedSeeds.forEach(seed => {
+      var matchingSeeds = this.seeds.filter(x => x.seed.id == seed.seedID)
+      if(matchingSeeds.length == 1){
+        matchingSeeds[0].amount = seed.amount
+        matchingSeeds[0].discovered = seed.discovered
+      } else {
+        unknownSeed = true
+      }
+    })
+
+    if(unknownSeed){
+      return false;
+    }
+    return true;
   }
 }
