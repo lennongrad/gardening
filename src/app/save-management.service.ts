@@ -87,7 +87,8 @@ export class SaveManagementService {
       saveablePlantData.push({
         plantDataID: plantData.staticInfo.id,
         pattern: plantData.pattern,
-        discovered: plantData.discovered
+        discovered: plantData.discovered,
+        attemptedPatterns: plantData.attemptedPatterns
       })
     })
 

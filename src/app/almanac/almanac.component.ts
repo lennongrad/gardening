@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlmanacTrackerService } from '../almanac-tracker.service';
 import { PlantData } from 'src/interfaces/plant';
-import { Seed, SeedData } from 'src/interfaces/seed';
+import { PatternAttempt, Seed, SeedData } from 'src/interfaces/seed';
 import { SeedCombinationsService } from '../seed-combinations.service';
 import { DebugService } from '../debug.service';
 import { GrowingPlantsService } from '../growing-plants.service';
@@ -16,6 +16,10 @@ export class AlmanacComponent implements OnInit {
 
   @Input() activeWindow: boolean = false;
 
+  lastCalculatedSeeds: Array<Array<PatternAttempt>> = []
+  lastCalculatedSeedsPlantID: string = ""
+  lastCalculatedWordles: Array<0|1|2> = []
+
   constructor(
     private almanacTrackerService: AlmanacTrackerService,
     private seedCombinationService: SeedCombinationsService,
@@ -23,6 +27,7 @@ export class AlmanacComponent implements OnInit {
     private debugService: DebugService) { }
 
   ngOnInit(): void {
+    //this.almanacTrackerService.selectedPlant = this.almanacTrackerService.plantList.slice(-1)[0]
   }
 
   getPlants(): Array<PlantData>{
@@ -144,6 +149,19 @@ export class AlmanacComponent implements OnInit {
       return "";
     }
     return matchedYield.toString();
+  }
+
+  getAttemptedPatterns(): Array<Array<PatternAttempt>>{
+    if(this.getSelectedPlant() == null){
+      return []
+    }
+
+    if(this.lastCalculatedSeedsPlantID != this.getSelectedPlant()?.staticInfo.id || this.lastCalculatedSeeds.length != this.getSelectedPlant()?.attemptedPatterns.length){
+      this.lastCalculatedSeeds = this.almanacTrackerService.getAttemptedSeeds(this.getSelectedPlant()!)
+      this.lastCalculatedSeedsPlantID = this.getSelectedPlant()?.staticInfo.id!
+    }
+
+    return this.lastCalculatedSeeds
   }
 
   clickSort(id: string){

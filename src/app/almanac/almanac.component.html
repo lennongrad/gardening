@@ -28,5 +28,23 @@
                 <td class="plant-list-yield" *ngFor="let seed of getSeedTypes()">{{getSeedYields(plant, seed)}}</td>
             </tr>
         </table>
+        <div id="plant-description" *ngIf="getSelectedPlant() != null">
+            <h1 *ngIf="!getSelectedPlant()?.discovered">
+                Attempted Patterns 
+                <div class="tooltip-hover"> ? <div class="tooltip">
+                    If you harvest a viable plant while this menu is open, its pattern will be registered in the following table.
+                    <br><span id="example-orange">ORANGE</span>: This seed type appears somewhere in the plant's pattern, but not at that position.
+                    <br><span id="example-green">GREEN</span>: This seed type appears in the plant's pattern at that exact same position.
+                </div></div>
+            </h1>
+            <div id="plant-attempted-patterns" *ngIf="!getSelectedPlant()?.discovered">
+                <div *ngFor="let pattern of getAttemptedPatterns()" class="plant-attempted-pattern">
+                    <div *ngFor="let step of pattern" class="plant-attempted-pattern-seed" [class.valid0]="step.validity == 0" [class.valid1]="step.validity == 1" [class.valid2]="step.validity == 2">
+                        <img *ngIf="step.seed != null" [src]="'assets/items/' + step.seed.seed.icon">
+                        <img *ngIf="step.seed == null" src="assets/items/shadow_seed.png">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

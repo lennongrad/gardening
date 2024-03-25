@@ -12,13 +12,15 @@ export interface StaticPlantData {
 export interface PlantData {
     staticInfo: StaticPlantData,
     pattern: string,
-    discovered: boolean
+    discovered: boolean,
+    attemptedPatterns: Array<string>
 }
 
 export interface SaveablePlantData{
     plantDataID: string,
     pattern: string,
-    discovered: boolean
+    discovered: boolean,
+    attemptedPatterns: Array<string>
 }
 
 export interface Plant {

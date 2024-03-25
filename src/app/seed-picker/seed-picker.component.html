@@ -15,8 +15,8 @@
         <button id="submit" [style.border-color]="getSubmissionText().color" (click)="submitSeedCombination()">
             <div id="submit-top">
                 {{getSubmissionText().top}} 
-                <div id="submission-tooltip">?
-                    <div id="submit-tooltip">{{getSubmissionText().tooltip}}</div>
+                <div class="tooltip-hover">?
+                    <div class="tooltip">{{getSubmissionText().tooltip}}</div>
                 </div>
             </div>
             <div id="submit-bottom">({{getSubmissionText().bottom}})</div>

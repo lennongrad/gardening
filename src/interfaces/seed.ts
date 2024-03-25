@@ -16,6 +16,11 @@ export interface SaveableSeed{
     discovered: boolean
 }
 
+export interface PatternAttempt{
+    seed: Seed | null,
+    validity: 0|1|2
+}
+
 export interface ToolData {
     id: number,
     name: string,

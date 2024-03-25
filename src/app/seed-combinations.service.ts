@@ -3,6 +3,7 @@ import { seedData, toolData } from 'src/data/plants';
 import { SeedData, Seed, SaveableSeed, Tool, CollectedItemAnimation, SaveableTool } from 'src/interfaces/seed';
 import { SaveManagementService } from './save-management.service';
 import { GrowingPlantsService } from './growing-plants.service';
+import { Plant, PlantData } from 'src/interfaces/plant';
 
 @Injectable({
   providedIn: 'root'

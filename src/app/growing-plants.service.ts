@@ -169,7 +169,7 @@ export class GrowingPlantsService {
 
     if(plant.plantData == null){
       if(this.isInviable(plant)){
-        this.alamancTrackerService.submitFailedSeedPattern(plant.plantedPattern);
+        this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
         this.plants = this.plants.filter(x => x != plant)
       }
       return
@@ -197,6 +197,7 @@ export class GrowingPlantsService {
     })
 
     plant.plantData.discovered = true
+    this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
   }
 
   getMaxCycles(plant: Plant): number{
