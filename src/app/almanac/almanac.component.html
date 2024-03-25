@@ -1,0 +1,30 @@
+<div class="window" id="almanac-window" [class.active-window]="activeWindow"  style="border-image-source: url('assets/ui/frame.png');">
+    <div id="plant-list" class=" black-border-text">
+        <table>
+            <tr class="header-row">
+                <th></th>
+                <th>Name</th>
+                <th>Family</th>
+                <th>Pattern</th>
+                <th id="plant-header-xp">XP</th>
+                <th class="seed-headers" *ngFor="let seed of getSeedTypes()"><img [src]="'assets/items/' + seed.seed.icon"></th>
+            </tr>
+            <tr *ngFor="let plant of getPlants(); index as i" (click)="clickPlant(plant)" [class.is-selected]="getSelectedPlant() == plant" 
+                [style]="getRowStyle(plant, i)">
+                <td class="plant-list-hovered"></td>
+                <td class="plant-list-name">{{plant.staticInfo.name}}</td>
+                <td class="plant-list-family">({{plant.staticInfo.family}})</td>
+                <td class="plant-list-seeds">
+                    <div class="seed-icon" *ngFor="let seed of getPatternSeeds(plant)">
+                        <img [src]="'assets/items/' + getSeedIcon(seed)">
+                    </div>
+                    <div class="seed-icon" *ngFor="let seed of getShadowSeeds(plant)">
+                        <img [src]="'assets/items/shadow_seed.png'">
+                    </div>
+                </td>
+                <td class="plant-list-xp">300k</td>
+                <td class="plant-list-yield" *ngFor="let seed of getSeedTypes()">{{getSeedYields(plant, seed)}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

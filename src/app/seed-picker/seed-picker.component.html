@@ -1,4 +1,4 @@
-<div id="main" [ngStyle]="getMainStyle()">
+<div id="main" [ngStyle]="getMainStyle()" *ngIf="isShoveling()">
     <div id="seed-list">
         <button class="seed-button" [style]="getSeedOptionStyle(seedInfo)" *ngFor="let seedInfo of getSeedOptions()" (click)="selectSeed(seedInfo)">
             <img [src]="'assets/items/' + seedInfo.seed.icon">
@@ -12,7 +12,7 @@
     </div>
     <div id="seed-submission">
         <button id="clear" (click)="clearSeeds()"><img src="assets/rubbish-bin.svg"></button>
-        <button id="submit" [style.backgroundColor]="getSubmissionText().color" (click)="submitSeedCombination()">
+        <button id="submit" [style.border-color]="getSubmissionText().color" (click)="submitSeedCombination()">
             <div id="submit-top">
                 {{getSubmissionText().top}} 
                 <div id="submission-tooltip">?

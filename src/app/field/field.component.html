@@ -9,9 +9,14 @@
             <app-plant [plant]="getPlant(dirt)"></app-plant>
         </div>
     </div>
-    <div id="prospective-dirt-spots">
+    <div id="prospective-dirt-spots" *ngIf="getHoeing()">
         <div class="prospective-dirt" *ngFor="let dirt of getProspectiveDirtSpots()" [ngStyle]="getDirtStyle(dirt)" (click)="onMouseDownProspective(dirt)">
             <div class="prospective-dirt-hover"></div>
+        </div>
+    </div>
+    <div id="collected-items-animations">
+        <div class="collected-item-animation" *ngFor="let item of getCollectedItemAnimations()" [ngStyle]="getCollectedItemStyle(item)">
+            <img [src]="'assets/items/' + item.item.icon">
         </div>
     </div>
 </div>

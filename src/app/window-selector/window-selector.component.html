@@ -1,0 +1,11 @@
+<div id="window-selector">
+    <div id="window-selector-tabs">
+        <div class="window-tab" *ngFor="let tab of getWindows()" style="border-image-source: url('assets/ui/frame.png'); background-image: url('assets/ui/long_button.png')"
+            (click)="selectWindow(tab)">
+            <img [src]="'assets/' + tab.icon">
+        </div>
+    </div>
+    <div id="window-selector-border"  style="border-image-source: url('assets/ui/metalframe.png')">
+
+    </div>
+</div>

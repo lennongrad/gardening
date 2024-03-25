@@ -14,6 +14,8 @@ export class AlmanacTrackerService {
   plantList: Array<PlantData> = []
   failedCombinations: Set<string> = new Set<string>()
 
+  selectedPlant: PlantData | null = null;
+
   constructor() {  }
 
   initializePlantData(){

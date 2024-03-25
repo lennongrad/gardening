@@ -4,7 +4,9 @@ export interface StaticPlantData {
     patternSize: number,
     growthCyclesAdjustment?: number,
     patternSeeds: string,
-    resultSeeds: Record<string, number>
+    resultSeeds: Record<string, number>,
+    spriteIndex: number,
+    family: string
 }
 
 export interface PlantData {
@@ -24,7 +26,8 @@ export interface Plant {
     plantData: PlantData | null,
     plantedPattern: string,
     cycles: number,
-    waterCycles: number
+    waterCycles: number,
+    animationTimer: number
 }
 
 export interface SaveablePlant{

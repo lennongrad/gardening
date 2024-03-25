@@ -2,6 +2,8 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { GrowingPlantsService } from '../growing-plants.service';
 import { Dirt, Plant, ProspectiveDirt } from 'src/interfaces/plant';
 import { SaveManagementService } from '../save-management.service';
+import { SeedCombinationsService } from '../seed-combinations.service';
+import { CollectedItemAnimation } from 'src/interfaces/seed';
 
 @Component({
   selector: 'app-field',
@@ -13,6 +15,7 @@ export class FieldComponent implements OnInit {
 
   constructor(
     private growingPlantsService: GrowingPlantsService,
+    private seedCombinationService: SeedCombinationsService,
     private saveManagementService: SaveManagementService) { 
     setInterval(() => {this.updateFrame()}, 10)
   }
@@ -37,6 +40,16 @@ export class FieldComponent implements OnInit {
     }
   }
 
+  getCollectedItemStyle(item: CollectedItemAnimation): Record<string,any>{
+    var relativePosition = this.growingPlantsService.getRelativePosition([item.x, item.y])
+
+    return {
+      "left": relativePosition[0] + "px",
+      "top": relativePosition[1] + "Px",
+      "opacity": 1 - Math.pow(item.time / this.seedCombinationService.collectedItemMaxTime, 2)
+    }
+  }
+
   getPlant(dirt: Dirt): Plant | null{
     return this.growingPlantsService.getPlantFromDirt(dirt);
   }
@@ -49,8 +62,19 @@ export class FieldComponent implements OnInit {
     return this.growingPlantsService.dirtSpots
   }
 
+  getCollectedItemAnimations(): Array<CollectedItemAnimation>{
+    return this.seedCombinationService.collectedItemAnimations
+  }
+
   getProspectiveDirtSpots(): Array<ProspectiveDirt>{
     return this.growingPlantsService.prospectiveDirtSpots
+  }
+
+  getHoeing(): boolean{
+    if(this.seedCombinationService.selectedTool == null){
+      return false;
+    }
+    return this.seedCombinationService.selectedTool.tool.id == 0
   }
 
   updateFrame(){
@@ -69,12 +93,17 @@ export class FieldComponent implements OnInit {
   }
 
   onMouseDownProspective(dirt: ProspectiveDirt){
-    this.growingPlantsService.addDirt(dirt.x, dirt.y);
-    this.growingPlantsService.selectedDirt = null;
+    if(this.seedCombinationService.selectedTool != null && this.seedCombinationService.selectedTool.tool.id == 0){
+      this.growingPlantsService.addDirt(dirt.x, dirt.y);
+      this.growingPlantsService.selectedDirt = null;
+      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
+
+    }
   }
 
   onBackgroundMouseDown(){
     this.growingPlantsService.selectedDirt = null;
+    this.seedCombinationService.selectedTool = null;
   }
 
   onMouseDownDirt(dirt: Dirt){

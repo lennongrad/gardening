@@ -15,3 +15,28 @@ export interface SaveableSeed{
     amount: number,
     discovered: boolean
 }
+
+export interface ToolData {
+    id: number,
+    name: string,
+    iconIndex: number
+}
+
+export interface Tool {
+    tool: ToolData,
+    timer: number
+}
+
+export interface SaveableTool { 
+    toolID: number,
+    timer: number
+}
+
+export interface CollectedItemAnimation {
+    item: SeedData,
+    velocityX: number,
+    velocityY: number,
+    x: number,
+    y: number,
+    time: number
+}

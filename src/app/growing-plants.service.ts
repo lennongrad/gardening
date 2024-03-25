@@ -3,6 +3,7 @@ import { Dirt, Plant, PlantData, ProspectiveDirt, SaveableDirt, SaveablePlant } 
 import { AlmanacTrackerService } from './almanac-tracker.service';
 import { SeedCombinationsService } from './seed-combinations.service';
 import { SaveManagementService } from './save-management.service';
+import { SeedData } from 'src/interfaces/seed';
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +25,13 @@ export class GrowingPlantsService {
   dirtHeight: number = 100
   blocksAwayAllowed: number = 10
 
+  timerMax: number = 6;
+
   constructor(
     private alamancTrackerService: AlmanacTrackerService, 
     private seedCombinationService: SeedCombinationsService) { 
-    setInterval(() => {this.growthTick()}, 250)
+      seedCombinationService.growingPlantsService = this;
+     setInterval(() => {this.growthTick()}, 250)
   }
 
   onLoadSave(loadedDirt: Array<SaveableDirt>, loadedPlants: Array<SaveablePlant>): boolean{
@@ -46,7 +50,8 @@ export class GrowingPlantsService {
         plantData: this.alamancTrackerService.checkSeedPattern(plant.plantedPattern),
         plantedPattern: plant.plantedPattern,
         cycles: plant.cycles,
-        waterCycles: plant.waterCycles
+        waterCycles: plant.waterCycles,
+        animationTimer: Math.random() * this.timerMax
       })
     })
     return true;
@@ -126,27 +131,72 @@ export class GrowingPlantsService {
       plantData: this.alamancTrackerService.checkSeedPattern(pattern), 
       plantedPattern: pattern, 
       cycles: 0, 
-      waterCycles: 0
+      waterCycles: 0,
+      animationTimer: this.timerMax * Math.random()
     };
 
     this.plants.push(newPlant);
   }
 
+  clickPlant(plant: Plant){
+    if(this.seedCombinationService.selectedTool == null){
+      return
+    }
+    if(this.seedCombinationService.selectedTool.tool.id == 2){
+      plant.waterCycles += 5
+      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
+    } else if (this.seedCombinationService.selectedTool.tool.id == 3){
+      this.harvestPlant(plant)
+      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
+    }
+  }
+
+  getYieldedSeeds(plant: PlantData): Array<[SeedData, number]>{
+    var results: Array<[SeedData, number]> = [];
+
+    Object.keys(plant.staticInfo.resultSeeds).forEach(seed => {
+      var matchingSeed = this.seedCombinationService.getSeedByID(seed)
+      if(matchingSeed != null){
+        results.push([matchingSeed, plant.staticInfo.resultSeeds[seed]])
+      }
+    })
+
+    return results
+  }
+
   harvestPlant(plant: Plant){
+    var dirtPosition = [plant.dirt.x * this.dirtWidth, plant.dirt.y * this.dirtHeight]
+
+    if(plant.plantData == null){
+      if(this.isInviable(plant)){
+        this.alamancTrackerService.submitFailedSeedPattern(plant.plantedPattern);
+        this.plants = this.plants.filter(x => x != plant)
+      }
+      return
+    }
+
+    if(plant.cycles < this.getMaxCycles(plant)){
+      return;
+    }
+
     this.plants = this.plants.filter(x => x != plant)
 
-    console.log(plant)
-    if(plant.plantData == null){
-      this.alamancTrackerService.submitFailedSeedPattern(plant.plantedPattern);
-    } else {
-      Object.keys(plant.plantData.staticInfo.resultSeeds).forEach(seed => {
-        var matchingSeed = this.seedCombinationService.getSeedByID(seed)
-        if(matchingSeed != null){
-          this.seedCombinationService.gainSeed(matchingSeed, plant.plantData?.staticInfo.resultSeeds[seed]!)
-        }
-      })
-      plant.plantData.discovered = true
-    } 
+    this.getYieldedSeeds(plant.plantData).forEach(pair => {
+      var matchingSeed = pair[0]
+      var seedAmount = pair[1]
+      this.seedCombinationService.gainSeed(matchingSeed, seedAmount)
+      for(var i = 0; i < seedAmount; i++){
+        this.seedCombinationService.animateItemCollect(
+          matchingSeed, 
+          Math.random() * this.dirtWidth + dirtPosition[0],  
+          Math.random() * this.dirtHeight + dirtPosition[1],
+          (1 - Math.random() * 2) * 6,
+          (Math.random() + 1) * -4,
+        )
+      }
+    })
+
+    plant.plantData.discovered = true
   }
 
   getMaxCycles(plant: Plant): number{
@@ -156,11 +206,15 @@ export class GrowingPlantsService {
     return plant.plantedPattern.length * 10
   }
 
-  getDirtPosition(dirt: Dirt | ProspectiveDirt): [number, number]{
+  getRelativePosition(position: [number, number]): [number,number]{
     return [
-      dirt.x * this.dirtWidth + this.xOffset + (window.innerWidth / 2 - this.dirtWidth / 2),
-      dirt.y * this.dirtHeight + this.yOffset + (window.innerHeight / 2 - this.dirtHeight / 2)
+      position[0] + this.xOffset + (window.innerWidth / 2 - this.dirtWidth / 2),
+      position[1] + this.yOffset + (window.innerHeight / 2 - this.dirtHeight / 2)
     ]
+  }
+
+  getDirtPosition(dirt: Dirt | ProspectiveDirt): [number, number]{
+    return this.getRelativePosition([dirt.x * this.dirtWidth, dirt.y * this.dirtHeight])
   }
 
   getPlants(): Array<Plant>{
@@ -173,6 +227,10 @@ export class GrowingPlantsService {
     }
 
     this.plants.forEach(plant => {
+      if(Math.random() > .5){
+        plant.animationTimer = (plant.animationTimer + 1) % this.timerMax
+      }
+
       if(plant.cycles < this.getMaxCycles(plant) && !this.isInviable(plant) && plant.waterCycles > 0){
         plant.waterCycles -= 1
         plant.cycles += 1

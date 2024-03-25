@@ -88,7 +88,14 @@ export class SeedPickerComponent implements OnInit {
   }
 
   getMaxSeedAmount(): number{
-    return 6
+    return this.seedCommbinationService.getMaxSeedAmount()
+  }
+
+  isShoveling(): boolean{
+    if(this.seedCommbinationService.selectedTool == null){
+      return false;
+    }
+    return this.seedCommbinationService.selectedTool.tool.id == 1;
   }
 
   changeSeedAmount(increaseSeeds: boolean){
@@ -137,6 +144,10 @@ export class SeedPickerComponent implements OnInit {
   }
 
   submitSeedCombination(){
+    if(this.seedCommbinationService.selectedTool == null || this.seedCommbinationService.selectedTool.tool.id != 1){
+      return;
+    }
+
     if(this.selectedSeeds.filter(seed => seed != null).length < this.seedAmount){
       return;
     }
@@ -158,6 +169,8 @@ export class SeedPickerComponent implements OnInit {
     
     this.seedCommbinationService.consumeSeeds(this.selectedSeeds);
     this.clearSeeds();
+
+    this.seedCommbinationService.useTool(this.seedCommbinationService.selectedTool)
 
     this.growingPlantsService.selectedDirt = null;
   }

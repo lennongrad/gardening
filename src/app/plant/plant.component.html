@@ -1,5 +1,11 @@
-<div class="plant-instance" *ngIf="plant != null">
-    <b>{{getPlantName()}}</b><br>({{plant.cycles}} / {{getMaxCycles()}})<br>
-    <span class="water" *ngIf="plant.waterCycles == 0 && !isInviable() && plant.cycles != getMaxCycles()" (click)="waterPlant()">Water</span>
-    <span class="harvest" *ngIf="isInviable() || plant.cycles == getMaxCycles()" (click)="harvestPlant()">Harvest</span>
+<div class="plant-instance" *ngIf="plant != null" (click)="clickPlant()">
+    <div class="plant-display" style="background-image: url('assets/berrytrees.png')" [ngStyle]="getPlantDisplayStyle()"></div>
+    <div class="plant-title">
+        <div class="watering-icon"  *ngIf="plant.waterCycles == 0 && !isInviable() && plant.cycles != getMaxCycles()"><img src="assets/drop.svg"></div>
+        <div class="harvest-icon"  *ngIf="isInviable() || plant.cycles == getMaxCycles()"><img src="assets/scythe.svg"></div>
+        <div class="plant-name">{{getPlantName()}}</div>
+    </div>
+    <!--<b>{{getPlantName()}}</b><br>({{plant.cycles}} / {{getMaxCycles()}})<br>-->
+    <!--<span class="water" *ngIf="plant.waterCycles == 0 && !isInviable() && plant.cycles != getMaxCycles()" (click)="waterPlant()">Water</span>
+    <span class="harvest" *ngIf="isInviable() || plant.cycles == getMaxCycles()" (click)="harvestPlant()">Harvest</span>-->
 </div>

@@ -3,7 +3,7 @@ import { Plant, SaveableDirt, SaveablePlant, SaveablePlantData } from 'src/inter
 import { GrowingPlantsService } from './growing-plants.service';
 import { AlmanacTrackerService } from './almanac-tracker.service';
 import { SeedCombinationsService } from './seed-combinations.service';
-import { SaveableSeed } from 'src/interfaces/seed';
+import { SaveableSeed, SaveableTool } from 'src/interfaces/seed';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +70,15 @@ export class SaveManagementService {
 
     localStorage.setItem("savedSeeds", JSON.stringify(saveableSeeds))
 
+    var saveableTools: Array<SaveableTool> = [];
+    this.seedCombinationService.tools.forEach(tool => {
+      saveableTools.push({
+        toolID: tool.tool.id,
+        timer: tool.timer
+      })
+    })
+    localStorage.setItem("savedTools", JSON.stringify(saveableTools))
+
     /// //////
     /// SAVE DISCOVERED PLANTS/PATTERNS
     /// //////
@@ -96,21 +105,44 @@ export class SaveManagementService {
     var attemptLoadSeeds = localStorage.getItem("savedSeeds")
     var attemptLoadPlantData = localStorage.getItem("savedPlantData")
     var attemptLoadFailedPatterns = localStorage.getItem("savedFailedPatterns")
+    var attemptLoadTools = localStorage.getItem("savedTools")
 
-    if(attemptLoadPlants != null && attemptLoadDirt != null && attemptLoadSeeds != null && attemptLoadPlantData != null && attemptLoadFailedPatterns){
+    if(attemptLoadPlants && attemptLoadDirt && attemptLoadSeeds && attemptLoadPlantData && attemptLoadFailedPatterns && attemptLoadTools){
       loadedSaveSuccessfully = true
       
       var loadedSeeds = JSON.parse(attemptLoadSeeds) as Array<SaveableSeed>;
-      loadedSaveSuccessfully = loadedSaveSuccessfully && this.seedCombinationService.onLoadSave(loadedSeeds);
+      var loadedTools = JSON.parse(attemptLoadTools) as Array<SaveableTool>;
+      var seedLoadedSuccessfully = this.seedCombinationService.onLoadSave(loadedSeeds, loadedTools);
+      if(!seedLoadedSuccessfully){
+        console.log("Seed loaded unsuccessfully")
+        loadedSaveSuccessfully = false
+      }
 
-      var loadedPlantData = JSON.parse(attemptLoadPlantData) as Array<SaveablePlantData>
-      var loadedFailedPatterns = JSON.parse(attemptLoadPlantData) as Array<string>
-      loadedSaveSuccessfully = loadedSaveSuccessfully && this.almanacTrackerService.onLoadSave(loadedPlantData, loadedFailedPatterns)
+      if(loadedSaveSuccessfully){
+        var loadedPlantData = JSON.parse(attemptLoadPlantData) as Array<SaveablePlantData>
+        var loadedFailedPatterns = JSON.parse(attemptLoadPlantData) as Array<string>
+        var almanacLoadedSuccessfully = this.almanacTrackerService.onLoadSave(loadedPlantData, loadedFailedPatterns)
 
-      var loadedPlants = JSON.parse(attemptLoadPlants) as Array<SaveablePlant>
-      var loadedDirt = JSON.parse(attemptLoadDirt) as Array<SaveableDirt>;
+        if(!almanacLoadedSuccessfully){
+          console.log("Almanac loaded unsuccessfully")
+          loadedSaveSuccessfully = false
+        }
+      }
 
-      loadedSaveSuccessfully = loadedSaveSuccessfully && this.growingPlantService.onLoadSave(loadedDirt, loadedPlants);
+      if(loadedSaveSuccessfully){
+        var loadedPlants = JSON.parse(attemptLoadPlants) as Array<SaveablePlant>
+        var loadedDirt = JSON.parse(attemptLoadDirt) as Array<SaveableDirt>;
+        var plantsLoadedSuccessfully = this.growingPlantService.onLoadSave(loadedDirt, loadedPlants);
+
+        if(!plantsLoadedSuccessfully){
+          console.log("Plants loaded unsuccessfully")
+          loadedSaveSuccessfully = false
+        }
+
+        if(!loadedSaveSuccessfully){
+          this.clearData()
+        }
+      }
     }
 
     if(!loadedSaveSuccessfully){

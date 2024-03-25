@@ -23,3 +23,49 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+.plant-display{
+    pointer-events: none;
+    position: relative;
+    top: 20%;
+    left: 50%;
+    image-rendering: pixelated;
+}
+
+.plant-title{
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 95%;
+    background-color: rgba(0,0,0,.6);
+    border-radius: 20px;
+    color: white;
+    font-size: 14px;
+    border: 2px solid black;
+    font-family: "IM Fell English", serif;
+
+    transform: translateX(-50%)
+}
+
+.watering-icon, .harvest-icon{
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 100%;
+    padding: 2px;
+    border: 1px solid black;
+
+    img{
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.watering-icon{
+    background-color: blue;
+}
+.harvest-icon{
+    background-color: brown;
+}

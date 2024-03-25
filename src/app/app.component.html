@@ -1,2 +1,6 @@
 <app-seed-picker></app-seed-picker>
 <app-field></app-field>
+<app-toolbar></app-toolbar>
+<app-window-selector></app-window-selector>
+<app-information [activeWindow]="getActiveWindow() != null && getActiveWindow()!.name == 'Information'"></app-information>
+<app-almanac [activeWindow]="getActiveWindow() != null && getActiveWindow()!.name == 'Almanac'"></app-almanac>
