@@ -12,7 +12,7 @@ import { GrowingPlantsService } from '../growing-plants.service';
   styleUrls: ['./almanac.component.less']
 })
 export class AlmanacComponent implements OnInit {
-  
+  sortingID: string | null = null;
 
   @Input() activeWindow: boolean = false;
 
@@ -26,7 +26,43 @@ export class AlmanacComponent implements OnInit {
   }
 
   getPlants(): Array<PlantData>{
-    return this.almanacTrackerService.plantList
+    var plants = [...this.almanacTrackerService.plantList]
+    var modifiedID = this.sortingID
+    var wasBackwards = false
+
+    if(this.sortingID != null && this.sortingID.slice(-1) == "!"){
+      modifiedID = this.sortingID.slice(0,-1)
+      wasBackwards = true
+    }
+
+    switch(modifiedID){
+      case 'Name': plants.sort((x,y) => {
+        return (x.staticInfo.name < y.staticInfo.name) ? -1 : 1
+      }); break;
+      case 'Family': plants.sort((x,y) => {
+        return (x.staticInfo.family < y.staticInfo.family) ? -1 : 1
+      }); break;
+      case 'Pattern': plants.sort((x,y) => {
+        return x.pattern.length - y.pattern.length
+      }); break;
+      case 'XP': plants.sort((x,y) => {
+        return (this.getXP(x) > this.getXP(y)) ? -1 : 1
+      }); break;
+    }
+
+    this.getSeedTypes().forEach(seed => {
+      if(modifiedID == seed.seed.id){
+        plants.sort((x,y) => {
+          return Number(this.getSeedYields(y, seed))  - Number(this.getSeedYields(x, seed)) 
+        }); 
+      }
+    })
+
+    if(wasBackwards){
+      plants.reverse()
+    }
+
+    return plants
   }
 
   getSeedIcon(seed: Seed | null): string{
@@ -57,6 +93,16 @@ export class AlmanacComponent implements OnInit {
     return this.almanacTrackerService.selectedPlant
   }
 
+  getSortedSymbol(id: string): string{
+    if(id == this.sortingID){
+      return "↑"
+    }
+    if (id + "!" == this.sortingID){
+      return "↓"
+    }
+    return ""
+  }
+
   getRowStyle(plant: PlantData, index: number): Record<string, any>{
     if(this.getSelectedPlant() == null){
       return {}
@@ -72,8 +118,19 @@ export class AlmanacComponent implements OnInit {
 
     return base
   }
+  
+  getXP(plant: PlantData): string{
+    if(!plant.discovered){
+      return ""
+    }
+    return (plant.pattern.length * 100).toString() + "k"
+  }
 
   getSeedYields(plant: PlantData, seed: Seed): string{
+    if(!plant.discovered){
+      return ""
+    }
+
     var yields = this.growingPlantService.getYieldedSeeds(plant)
     var matchedYield = -1
 
@@ -87,6 +144,18 @@ export class AlmanacComponent implements OnInit {
       return "";
     }
     return matchedYield.toString();
+  }
+
+  clickSort(id: string){
+    if(this.sortingID == id + "!"){
+      this.sortingID = null
+    } else if(this.sortingID == id){
+      this.sortingID = id + "!"
+    } else{
+      this.sortingID = id
+    }
+
+    this.getPlants()
   }
 
   clickPlant(plant: PlantData){

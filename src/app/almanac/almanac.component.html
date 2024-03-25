@@ -3,12 +3,14 @@
         <table>
             <tr class="header-row">
                 <th></th>
-                <th>Name</th>
-                <th>Family</th>
-                <th>Pattern</th>
-                <th id="plant-header-xp">XP</th>
-                <th class="seed-headers" *ngFor="let seed of getSeedTypes()"><img [src]="'assets/items/' + seed.seed.icon"></th>
-            </tr>
+                <th (click)="clickSort('Name')">Name <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span></th>
+                <th (click)="clickSort('Family')">Family <span class='sorted-symbol'>{{getSortedSymbol('Family')}}</span></th>
+                <th (click)="clickSort('Pattern')">Pattern <span class='sorted-symbol'>{{getSortedSymbol('Pattern')}}</span></th>
+                <th (click)="clickSort('XP')" id="plant-header-xp">XP <span class='sorted-symbol'>{{getSortedSymbol('XP')}}</span></th>
+                <th (click)="clickSort(seed.seed.id)" class="seed-headers" *ngFor="let seed of getSeedTypes()">
+                    <span class='sorted-symbol'>{{getSortedSymbol(seed.seed.id)}}</span> <img [src]="'assets/items/' + seed.seed.icon">
+                </th>
+            </tr> <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span>
             <tr *ngFor="let plant of getPlants(); index as i" (click)="clickPlant(plant)" [class.is-selected]="getSelectedPlant() == plant" 
                 [style]="getRowStyle(plant, i)">
                 <td class="plant-list-hovered"></td>
@@ -22,7 +24,7 @@
                         <img [src]="'assets/items/shadow_seed.png'">
                     </div>
                 </td>
-                <td class="plant-list-xp">300k</td>
+                <td class="plant-list-xp">{{getXP(plant)}}</td>
                 <td class="plant-list-yield" *ngFor="let seed of getSeedTypes()">{{getSeedYields(plant, seed)}}</td>
             </tr>
         </table>
