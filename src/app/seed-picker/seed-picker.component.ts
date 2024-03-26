@@ -107,6 +107,13 @@ export class SeedPickerComponent implements OnInit {
     this.updateSeedAmount()
   }
 
+  canChangeSeedAmount(increaseSeeds: boolean):boolean{
+    if(increaseSeeds){
+      return this.seedAmount < this.getMaxSeedAmount()
+    }
+    return this.seedAmount > 1
+  }
+
   updateSeedAmount(){
     while(this.selectedSeeds.length < this.seedAmount){
       this.selectedSeeds.push(null);

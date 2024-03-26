@@ -69,6 +69,20 @@ export class FieldComponent implements OnInit {
     return this.growingPlantsService.prospectiveDirtSpots
   }
 
+  getEXPStyle(dirt: Dirt): Record<string,any>{
+    if(dirt.xpValue == undefined || dirt.xpAnimation == undefined){
+      return {"display": "none"}
+    }
+
+    var percentageThrough = (100 - dirt.xpAnimation) / 100
+
+    return {
+      "bottom": (1 - Math.pow(Math.pow(percentageThrough, 2) - 1, 2)) * this.growingPlantsService.dirtHeight + "px",
+      "transform": "translateX(-50%) scale(" + (1.5 - Math.abs(dirt.xpAnimation - 60) / 100)  +  ")",
+      "opacity": Math.pow(1 - percentageThrough, .75)
+    }
+  }
+
   getHoeing(): boolean{
     if(this.seedCombinationService.selectedTool == null){
       return false;

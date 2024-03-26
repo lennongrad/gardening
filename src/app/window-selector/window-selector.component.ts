@@ -15,8 +15,8 @@ export class WindowSelectorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getExperience(): number{
-    return this.seedCombinationService.experience
+  getExperience(): string{
+    return this.seedCombinationService.getPrettyNumber(this.seedCombinationService.experience)
   }
 
 

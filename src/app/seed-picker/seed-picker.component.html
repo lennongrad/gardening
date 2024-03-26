@@ -6,9 +6,13 @@
         </button>
     </div>
     <div id="selected-seeds">
-        <button class="seed-selected" *ngFor="let seed of getSelectedSeeds(); index as i" (click)="removeSeed(i)">
+        <button class="seed-selected" *ngFor="let seed of getSelectedSeeds(); index as i" (click)="removeSeed(i)" style="background-image: url('assets/ui/little_background_frame.png')">
             <img [src]="'assets/items/' + seed?.icon" *ngIf="seed != null">
         </button>
+    </div>
+    <div id="pattern-size-selector">
+        <img id="seed-minus" src="assets/ui/Minus.png" (click)="changeSeedAmount(false)" [class.can-select]="canChangeSeedAmount(false)">
+        <img id="seed-plus" src="assets/ui/Plus.png" (click)="changeSeedAmount(true)" [class.can-select]="canChangeSeedAmount(true)">
     </div>
     <div id="seed-submission">
         <button id="clear" (click)="clearSeeds()"><img src="assets/rubbish-bin.svg"></button>

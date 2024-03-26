@@ -53,6 +53,27 @@
         transform: scale(1.1);
     }
 
+    .dirt-exp{
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        background-image: linear-gradient(#484314, #e6ff95);
+        background-repeat: repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        z-index: 10;
+        text-wrap: nowrap;
+        filter: drop-shadow(0 0 1px black) drop-shadow(0 0 1px black) drop-shadow(0 0 1px black) drop-shadow(0 0 1px black) drop-shadow(0 0 1px black);
+        
+        span{
+            font-size: 16px;
+        }
+    }
+
     &.selected-dirt{
         filter: brightness(1.2);
     }

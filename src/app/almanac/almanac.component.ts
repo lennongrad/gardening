@@ -32,6 +32,7 @@ export class AlmanacComponent implements OnInit {
 
   getPlants(): Array<PlantData>{
     var plants = [...this.almanacTrackerService.plantList]
+    plants = plants.filter(plant => plant.pattern.length <= this.seedCombinationService.getMaxSeedAmount())
     var modifiedID = this.sortingID
     var wasBackwards = false
 
@@ -87,11 +88,14 @@ export class AlmanacComponent implements OnInit {
 
   getShadowSeeds(plant: PlantData): Array<null>{
     var count = this.seedCombinationService.getMaxSeedAmount() - this.getPatternSeeds(plant).length
+    if(count <= 0){
+      return []
+    }
     return [].constructor(count)
   }
 
   getSeedTypes(): Array<Seed>{
-    return this.seedCombinationService.seeds
+    return this.seedCombinationService.seeds.filter(seed => seed.discovered)
   }
 
   getSelectedPlant(): PlantData | null{

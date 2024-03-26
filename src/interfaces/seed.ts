@@ -58,3 +58,22 @@ export interface CollectedItemAnimation {
 export interface SaveableInventory{
     experience: number
 }
+
+export interface QuestData{
+    id: number,
+    requiredAchievements: Array<string>,
+    requiredTrigger?: string,
+    transform: Record<string, any>,
+    text: string,
+    completionAchievements: Array<string>,
+    completionTriggers: Array<string>,
+    rewardAchievement: string,
+    isTutorial: boolean
+}
+
+export interface Quest{
+    questData: QuestData,
+    seenTriggers: Array<string>,
+    completed: boolean,
+    active: boolean
+}

@@ -3,7 +3,8 @@ import { Dirt, Plant, PlantData, ProspectiveDirt, SaveableDirt, SaveablePlant } 
 import { AlmanacTrackerService } from './almanac-tracker.service';
 import { SeedCombinationsService } from './seed-combinations.service';
 import { SaveManagementService } from './save-management.service';
-import { SeedData } from 'src/interfaces/seed';
+import { SeedData, Tool } from 'src/interfaces/seed';
+import { QuestService } from './quest.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,12 +30,14 @@ export class GrowingPlantsService {
 
   constructor(
     private alamancTrackerService: AlmanacTrackerService, 
-    private seedCombinationService: SeedCombinationsService) { 
+    private seedCombinationService: SeedCombinationsService,
+    private questService: QuestService) { 
       seedCombinationService.growingPlantsService = this;
   }
 
   startRunning(){
     setInterval(() => {this.growthTick()}, 250)
+    setInterval(() => {this.animationTick()}, 10)
   }
 
   onLoadSave(loadedDirt: Array<SaveableDirt>, loadedPlants: Array<SaveablePlant>): boolean{
@@ -145,12 +148,18 @@ export class GrowingPlantsService {
     if(this.seedCombinationService.selectedTool == null){
       return
     }
+
     if(this.seedCombinationService.selectedTool.tool.id == 2){
-      plant.waterCycles += 5
+      plant.waterCycles += this.seedCombinationService.getToolStrength(this.seedCombinationService.selectedTool)
       this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
     } else if (this.seedCombinationService.selectedTool.tool.id == 3){
-      this.harvestPlant(plant)
+      var gainedExperience = this.harvestPlant(plant, this.seedCombinationService.selectedTool)
       this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
+
+      if(gainedExperience != null){
+        plant.dirt.xpValue = gainedExperience
+        plant.dirt.xpAnimation = 100
+      }
     }
   }
 
@@ -167,7 +176,7 @@ export class GrowingPlantsService {
     return results
   }
 
-  harvestPlant(plant: Plant){
+  harvestPlant(plant: Plant, tool: Tool): number | null{
     var dirtPosition = [plant.dirt.x * this.dirtWidth, plant.dirt.y * this.dirtHeight]
 
     if(plant.plantData == null){
@@ -175,18 +184,24 @@ export class GrowingPlantsService {
         this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
         this.plants = this.plants.filter(x => x != plant)
       }
-      return
+      return null
     }
 
     if(plant.cycles < this.getMaxCycles(plant)){
-      return;
+      return null
     }
 
     this.plants = this.plants.filter(x => x != plant)
+    var scytheAccuracy = this.seedCombinationService.getToolStrength(tool)
 
     this.getYieldedSeeds(plant.plantData).forEach(pair => {
       var matchingSeed = pair[0]
       var seedAmount = pair[1]
+
+      while(Math.random() < scytheAccuracy){
+        seedAmount *= 2
+      }
+
       this.seedCombinationService.gainSeed(matchingSeed, seedAmount)
       for(var i = 0; i < seedAmount; i++){
         this.seedCombinationService.animateItemCollect(
@@ -201,7 +216,9 @@ export class GrowingPlantsService {
 
     plant.plantData.discovered = true
     this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
-    this.seedCombinationService.gainExperience(plant.plantData.staticInfo.experience)
+    var gainedExperience: number = this.seedCombinationService.gainExperience(plant.plantData.staticInfo.experience)
+
+    return gainedExperience
   }
 
   getMaxCycles(plant: Plant): number{
@@ -226,6 +243,18 @@ export class GrowingPlantsService {
     return this.plants;
   }
 
+  animationTick(){
+    this.dirtSpots.forEach(dirt => {
+      if(dirt.xpValue != undefined && dirt.xpAnimation != undefined){
+        dirt.xpAnimation -= 1
+        if(dirt.xpAnimation <= 0){
+          dirt.xpValue = undefined
+          dirt.xpAnimation = undefined
+        }
+      }
+    })
+  }
+
   growthTick(){
     if(this.seedCombinationService.seeds[0].amount == 0 && this.plants.length == 0){
       this.seedCombinationService.gainSeed(this.seedCombinationService.seeds[0].seed, 1)
@@ -239,6 +268,10 @@ export class GrowingPlantsService {
       if(plant.cycles < this.getMaxCycles(plant) && !this.isInviable(plant) && plant.waterCycles > 0){
         plant.waterCycles -= 1
         plant.cycles += 1
+
+        if(plant.cycles == this.getMaxCycles(plant)){
+          this.questService.registerTrigger("plantMaxxed")
+        }
       }
     })
 

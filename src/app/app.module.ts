@@ -12,6 +12,7 @@ import { WindowSelectorComponent } from './window-selector/window-selector.compo
 import { HttpClientModule } from '@angular/common/http';
 import { API_KEY, GoogleSheetsDbService } from 'ng-google-sheets-db';
 import { StoreComponent } from './store/store.component';
+import { TutorialManagerComponent } from './tutorial-manager/tutorial-manager.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { StoreComponent } from './store/store.component';
     AlmanacComponent,
     InformationComponent,
     WindowSelectorComponent,
-    StoreComponent
+    StoreComponent,
+    TutorialManagerComponent
   ],
   imports: [
     BrowserModule,

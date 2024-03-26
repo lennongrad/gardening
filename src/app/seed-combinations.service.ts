@@ -4,6 +4,7 @@ import { SeedData, Seed, SaveableSeed, Tool, CollectedItemAnimation, SaveableToo
 import { SaveManagementService } from './save-management.service';
 import { GrowingPlantsService } from './growing-plants.service';
 import { Plant, PlantData } from 'src/interfaces/plant';
+import { QuestService } from './quest.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class SeedCombinationsService {
 
   experience: number = 0
 
-  constructor() {
+  constructor(private questSevice: QuestService) {
     /*
     this.gainSeed(seedData[0], 3)
     this.gainSeed(seedData[1], 3)
@@ -38,6 +39,7 @@ export class SeedCombinationsService {
 
   gainExperience(increase: number){
     this.experience += increase
+    return increase
   }
 
   startRunning(){
@@ -53,6 +55,8 @@ export class SeedCombinationsService {
     } else {
       this.selectedTool = null 
     }
+
+    this.questSevice.registerTrigger("click" + tool.tool.name)
   }
 
   useTool(tool: Tool){
@@ -61,6 +65,8 @@ export class SeedCombinationsService {
     if(tool == this.selectedTool && (tool.timer > 0 || !this.holdingControl)){
       this.selectedTool = null
     }
+
+    this.questSevice.registerTrigger("use" + tool.tool.name)
   }
 
   getSeedsByPattern(pattern: string): Array<Seed>{
@@ -120,7 +126,10 @@ export class SeedCombinationsService {
   }
 
   getMaxSeedAmount(): number{
-    return 6
+    if(this.tools.length < 2){
+      return 0;
+    }
+    return this.getToolStrength(this.tools[1])
   }
 
   getSeedByID(id: string): SeedData | null {
@@ -175,7 +184,7 @@ export class SeedCombinationsService {
 
   getMaxTimerTool(tool: Tool): number{
     if(tool.tool.id == 0){
-      return Math.floor(Math.pow(this.growingPlantsService!.dirtSpots.length / tool.level, 2)) * 15000 + 15000
+      return Math.floor(Math.pow(this.growingPlantsService!.dirtSpots.length / (tool.level+1), 2)) * 15000 + 15000
     }
     return 0
   }
@@ -209,7 +218,7 @@ export class SeedCombinationsService {
 
   toolTimerTick(timeStamp: number){
     this.tools.forEach(tool => {
-      tool.timer -= (timeStamp - this.lastTimestamp)
+      tool.timer = Math.min(this.getMaxTimerTool(tool), tool.timer - (timeStamp - this.lastTimestamp))
     })
     
     this.lastTimestamp = timeStamp

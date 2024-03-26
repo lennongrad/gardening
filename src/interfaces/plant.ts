@@ -72,7 +72,9 @@ export interface ProspectiveDirt{
 export interface Dirt{
     id: number,
     x: number,
-    y: number
+    y: number,
+    xpValue?: number,
+    xpAnimation?: number
 }
 
 export interface SaveableDirt{

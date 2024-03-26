@@ -94,7 +94,7 @@ export class StoreComponent implements OnInit {
   }
 
   canAfford(tool: Tool){
-    return this.seedCombinationService.experience >=  this.seedCombinationService.getToolEXPCost(tool)
+    return this.seedCombinationService.experience >= this.seedCombinationService.getToolEXPCost(tool) && !this.getToolMaxed(tool)
   }
 
   getToolName(tool: Tool){

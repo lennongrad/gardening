@@ -1,5 +1,5 @@
 import { StaticPlantData } from "src/interfaces/plant";
-import { SeedData, ToolData, ToolLevel } from "src/interfaces/seed";
+import { QuestData, SeedData, ToolData, ToolLevel } from "src/interfaces/seed";
 
 export var seedData: Array<SeedData> = [
     {id: "A", icon: "red_seed.png", color: "#caa"},
@@ -26,3 +26,36 @@ export var toolLevels: Array<ToolLevel> = [
   {name: "Firestone", iconIndex: 4, color1: "FB6B1D", color2: "F9C22B"},
   {name: "Adamantium", iconIndex: 8, color1: "963893", color2: "E36DC9"},
 ]
+
+export var questData: Array<QuestData> = [
+  {id: 0, isTutorial: true, requiredAchievements: [], completionAchievements: [], completionTriggers: ["clickHoe"], rewardAchievement: "T1",
+     transform: {}, 
+     text: "Welcome! To start, click on the <b>Hoe</b> tool in the toolbar!", 
+  },
+  {id: 1, isTutorial: true, requiredAchievements: ["T1"], completionAchievements: [], completionTriggers: ["useHoe"], rewardAchievement: "T2",
+      transform: {}, 
+      text: "Now, use the <b>Hoe</b> tool by clicking on a dirt space in the field.", 
+  },
+  {id: 2, isTutorial: true, requiredAchievements: ["T2"], completionAchievements: [], completionTriggers: ["clickShovel"], rewardAchievement: "T3",
+      transform: {}, 
+      text: "Next, click on the <b>Shovel</b> tool and use it to start digging on the dirt space you made.", 
+  },
+  {id: 3, isTutorial: true, requiredAchievements: ["T3"], completionAchievements: [], completionTriggers: ["useShovel"], rewardAchievement: "T4",
+      transform: {}, 
+      text: "Click on the <b>Red Seed</b> to fill in the seed pattern, then press <b>Plant</b>.", 
+  },
+  {id: 4, isTutorial: true, requiredAchievements: ["T4"], completionAchievements: [], completionTriggers: ["usePail"], rewardAchievement: "T5",
+      transform: {}, 
+      text: "Click on the <b>Pail</b> tool and use it to water your new plant by clicking on it. Make sure to water it again soon!", 
+  },
+  {id: 5, isTutorial: true, requiredAchievements: ["T5"], requiredTrigger: "plantMaxxed", completionAchievements: [], completionTriggers: ["useScythe"], rewardAchievement: "T6",
+      transform: {}, 
+      text: "Once the plant is done growing, use the <b>Scythe</b> tool to harvest the plant.<br> You will collect the resulting seeds automatically, plus precious experience points.", 
+  },
+]
+
+
+/*{id: 1, isTutorial: true, requiredAchievements: ["T1"], completionAchievements: [], completionTriggers: ["useHoe"], rewardAchievement: "T2",
+transform: {}, 
+text: "Now, use the <b>Hoe</b> tool by clicking on a dirt space in the field.", 
+},*/
