@@ -9,6 +9,9 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AlmanacComponent } from './almanac/almanac.component';
 import { InformationComponent } from './information/information.component';
 import { WindowSelectorComponent } from './window-selector/window-selector.component';
+import { HttpClientModule } from '@angular/common/http';
+import { API_KEY, GoogleSheetsDbService } from 'ng-google-sheets-db';
+import { StoreComponent } from './store/store.component';
 
 @NgModule({
   declarations: [
@@ -19,12 +22,17 @@ import { WindowSelectorComponent } from './window-selector/window-selector.compo
     ToolbarComponent,
     AlmanacComponent,
     InformationComponent,
-    WindowSelectorComponent
+    WindowSelectorComponent,
+    StoreComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [{
+    provide: API_KEY,
+    useValue: "AIzaSyByA4ztVKLlcRdVgtoroqy1ltLoX8uGNxU"
+  }, GoogleSheetsDbService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

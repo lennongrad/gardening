@@ -109,7 +109,7 @@ export class AlmanacComponent implements OnInit {
   }
 
   getRowStyle(plant: PlantData, index: number): Record<string, any>{
-    if(this.getSelectedPlant() == null){
+    if(this.getSelectedPlant() == null || true){
       return {}
     }
 
@@ -128,7 +128,7 @@ export class AlmanacComponent implements OnInit {
     if(!plant.discovered){
       return ""
     }
-    return (plant.pattern.length * 100).toString() + "k"
+    return plant.staticInfo.experience.toString()
   }
 
   getSeedYields(plant: PlantData, seed: Seed): string{

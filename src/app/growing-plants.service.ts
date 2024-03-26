@@ -31,7 +31,10 @@ export class GrowingPlantsService {
     private alamancTrackerService: AlmanacTrackerService, 
     private seedCombinationService: SeedCombinationsService) { 
       seedCombinationService.growingPlantsService = this;
-     setInterval(() => {this.growthTick()}, 250)
+  }
+
+  startRunning(){
+    setInterval(() => {this.growthTick()}, 250)
   }
 
   onLoadSave(loadedDirt: Array<SaveableDirt>, loadedPlants: Array<SaveablePlant>): boolean{
@@ -198,11 +201,12 @@ export class GrowingPlantsService {
 
     plant.plantData.discovered = true
     this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
+    this.seedCombinationService.gainExperience(plant.plantData.staticInfo.experience)
   }
 
   getMaxCycles(plant: Plant): number{
     if(plant.plantData != null){
-      return plant.plantData.staticInfo.patternSize * 10 + (plant.plantData.staticInfo.growthCyclesAdjustment ? plant.plantData.staticInfo.growthCyclesAdjustment : 0)
+      return plant.plantData.staticInfo.patternSize * 10 + (plant.plantData.staticInfo.growthCyclesAdjustment ? Number(plant.plantData.staticInfo.growthCyclesAdjustment) : 0)
     }
     return plant.plantedPattern.length * 10
   }

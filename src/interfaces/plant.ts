@@ -1,12 +1,37 @@
+export const PlantMapping = {
+  id: "ID",
+  name: "Name",
+  spriteIndex: "SI",
+  family: "Family",
+  patternSize: "PS",
+  patternSeeds: "Seeds",
+  resultSeeds: "Result",
+  growthCyclesAdjustment: "GCA",
+  experience: "XP"
+}
+
+export interface LoadedPlantData {
+    id: string,
+    name: string,
+    patternSize: number,
+    growthCyclesAdjustment: number,
+    patternSeeds: string,
+    resultSeeds: string,
+    spriteIndex: number,
+    family: string,
+    experience: number
+}
+
 export interface StaticPlantData {
     id: string,
     name: string,
     patternSize: number,
-    growthCyclesAdjustment?: number,
+    growthCyclesAdjustment: number,
     patternSeeds: string,
     resultSeeds: Record<string, number>,
     spriteIndex: number,
-    family: string
+    family: string,
+    experience: number
 }
 
 export interface PlantData {

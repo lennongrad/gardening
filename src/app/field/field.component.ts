@@ -21,7 +21,6 @@ export class FieldComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.saveManagementService.attemptLoad();
   }
 
   getFieldStyle(): Record<string, any>{
@@ -94,9 +93,9 @@ export class FieldComponent implements OnInit {
 
   onMouseDownProspective(dirt: ProspectiveDirt){
     if(this.seedCombinationService.selectedTool != null && this.seedCombinationService.selectedTool.tool.id == 0){
+      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
       this.growingPlantsService.addDirt(dirt.x, dirt.y);
       this.growingPlantsService.selectedDirt = null;
-      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
 
     }
   }

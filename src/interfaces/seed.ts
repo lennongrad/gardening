@@ -29,12 +29,21 @@ export interface ToolData {
 
 export interface Tool {
     tool: ToolData,
-    timer: number
+    timer: number,
+    level: number
 }
 
 export interface SaveableTool { 
     toolID: number,
-    timer: number
+    timer: number,
+    level: number
+}
+
+export interface ToolLevel{
+    name: string,
+    iconIndex: number,
+    color1: string,
+    color2: string
 }
 
 export interface CollectedItemAnimation {
@@ -44,4 +53,8 @@ export interface CollectedItemAnimation {
     x: number,
     y: number,
     time: number
+}
+
+export interface SaveableInventory{
+    experience: number
 }

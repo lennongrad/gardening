@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { seedData, toolData } from 'src/data/plants';
-import { SeedData, Seed, SaveableSeed, Tool, CollectedItemAnimation, SaveableTool } from 'src/interfaces/seed';
+import { seedData, toolData, toolLevels } from 'src/data/plants';
+import { SeedData, Seed, SaveableSeed, Tool, CollectedItemAnimation, SaveableTool, SaveableInventory } from 'src/interfaces/seed';
 import { SaveManagementService } from './save-management.service';
 import { GrowingPlantsService } from './growing-plants.service';
 import { Plant, PlantData } from 'src/interfaces/plant';
@@ -25,15 +25,24 @@ export class SeedCombinationsService {
 
   lastTimestamp = 0
 
+  experience: number = 0
+
   constructor() {
-    setInterval(() => {this.animationTick()}, 25)
-    this.toolTimerTick(1)
     /*
     this.gainSeed(seedData[0], 3)
     this.gainSeed(seedData[1], 3)
     this.gainSeed(seedData[2], 3)
     this.gainSeed(seedData[3], 3)
     */
+  }
+
+  gainExperience(increase: number){
+    this.experience += increase
+  }
+
+  startRunning(){
+    setInterval(() => {this.animationTick()}, 25)
+    this.toolTimerTick(1)
   }
 
   selectTool(tool: Tool){
@@ -67,6 +76,47 @@ export class SeedCombinationsService {
     }
 
     return acc
+  }
+
+  getToolMaxed(tool: Tool): boolean{
+    return tool.level == 8
+  }
+
+  getPrettyNumber(number: number): string{
+    var total = ""
+    var remaining = number.toString()
+
+    while(remaining.length > 3){
+      total = remaining.slice(-3) + "," + total
+      remaining = remaining.slice(0,-3)
+    }
+
+    return (remaining + "," + total).slice(0,-1)
+  }
+
+  getToolEXPCost(tool: Tool): number{
+    return Math.pow(4, tool.level + 2) + 4
+  }
+
+  getToolStrength(tool: Tool): number{
+    switch(tool.tool.id){
+      case 1: return tool.level + 1;
+      case 2: return (tool.level + 1) * 5;
+      case 3: return (tool.level) * .05;
+    }
+    return 0;
+  }
+
+  getToolName(tool: Tool): string{
+    return toolLevels[tool.level].name + " " + tool.tool.name
+  }
+
+  getToolIcon(tool: Tool): string{
+    return (toolLevels[tool.level].iconIndex * 16 + tool.tool.iconIndex).toString()
+  }
+
+  getToolGradient(tool: Tool): string{
+    return "linear-gradient(#" + toolLevels[tool.level].color1 +  ", #" + toolLevels[tool.level].color2 + ")"
   }
 
   getMaxSeedAmount(): number{
@@ -125,7 +175,7 @@ export class SeedCombinationsService {
 
   getMaxTimerTool(tool: Tool): number{
     if(tool.tool.id == 0){
-      return Math.pow(this.growingPlantsService!.dirtSpots.length, 2) * 15000 + 15000
+      return Math.floor(Math.pow(this.growingPlantsService!.dirtSpots.length / tool.level, 2)) * 15000 + 15000
     }
     return 0
   }
@@ -140,7 +190,8 @@ export class SeedCombinationsService {
     toolData.forEach(tool => {
       this.tools.push({
         tool: tool,
-        timer: 0
+        timer: 0,
+        level: 0
       })
     })
   }
@@ -165,7 +216,7 @@ export class SeedCombinationsService {
     window.requestAnimationFrame(this.toolTimerTick.bind(this))
   }
 
-  onLoadSave(savedSeeds: Array<SaveableSeed>, savedTools: Array<SaveableTool>): boolean{
+  onLoadSave(savedSeeds: Array<SaveableSeed>, savedTools: Array<SaveableTool>, savedInventory: SaveableInventory): boolean{
     seedData.forEach(seed => {
       this.seeds.push({seed: seed, amount: 0, discovered: false})
     })
@@ -188,7 +239,8 @@ export class SeedCombinationsService {
     toolData.forEach(tool => {
       this.tools.push({
         tool: tool,
-        timer: 0
+        timer: 0,
+        level: 0
       })
     })
 
@@ -197,14 +249,17 @@ export class SeedCombinationsService {
       var matchingTools = this.tools.filter(x => x.tool.id == tool.toolID)
       if(matchingTools.length == 1){
         matchingTools[0].timer = tool.timer
+        matchingTools[0].level = Math.min(8, Math.max(0, tool.level))
       } else {
         unknownTool = true
       }
     })
 
     if(unknownTool){
-      return false;
+      return false;2
     }
+
+    this.experience = Number(savedInventory.experience)
 
     return true;
   }

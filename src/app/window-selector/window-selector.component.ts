@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TabWindow } from 'src/interfaces/window';
 import { WindowManagerService } from '../window-manager.service';
+import { SeedCombinationsService } from '../seed-combinations.service';
 
 @Component({
   selector: 'app-window-selector',
@@ -9,10 +10,15 @@ import { WindowManagerService } from '../window-manager.service';
 })
 export class WindowSelectorComponent implements OnInit {
 
-  constructor(private windowManagerService: WindowManagerService) { }
+  constructor(private windowManagerService: WindowManagerService, private seedCombinationService: SeedCombinationsService) { }
 
   ngOnInit(): void {
   }
+
+  getExperience(): number{
+    return this.seedCombinationService.experience
+  }
+
 
   getWindows(): Array<TabWindow>{
     return this.windowManagerService.windows

@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class DebugService {
   debugSettings: Record<string, boolean> = {
-    "showAllPlants": false
+    "showAllPlants": false,
+    "allowDegradeTool": true
   }
   
   getDebugSetting(name: string): boolean{

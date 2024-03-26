@@ -27,7 +27,6 @@ export class ToolbarComponent implements OnInit {
   isCooldown(tool: Tool): boolean{
     return tool.timer > 0
   }
-
   getCooldownRemaining(tool: Tool): string{
     var seconds = Math.ceil(tool.timer / 1000)
 
@@ -40,6 +39,10 @@ export class ToolbarComponent implements OnInit {
     var secondsString = seconds.toString()
     var minutesString = minutes.toString()
     return (minutesString != "0" ? (minutesString + ":") : "") + (secondsString.length == 2 ? secondsString : ("0" + secondsString))
+  }
+
+  getToolIcon(tool: Tool){
+    return this.seedCombinationService.getToolIcon(tool)
   }
 
   clickTool(tool: Tool){
@@ -108,6 +111,11 @@ export class ToolbarComponent implements OnInit {
   @HostListener("window:keydown.m")
   onMKeyDown(){
     this.seedCombinationService.cheatToolTimes()
+  }
+
+  @HostListener("window:keydown.v")
+  onVKeyDown(){
+    this.seedCombinationService.experience = (this.seedCombinationService.experience + 1) * 10
   }
 
   @HostListener("window:keydown.control")

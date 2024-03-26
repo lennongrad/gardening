@@ -1,0 +1,134 @@
+#store-window{
+    overflow-y: scroll;
+    min-width: 400px;
+}
+
+#tools-holder{
+    background-color: rgba(30,0,0,.4);
+}
+
+.tool-display{
+    user-select: none;
+
+    
+
+    &.can-afford{
+        filter: brightness(1.3);
+    }
+
+    &:hover{
+        filter: brightness(1.2);
+
+        .tool-display-icon{
+            transform: scale(1.1);
+
+            img{
+                transform: translate(-50%, -50%) scale(1.1)
+            }
+        }
+    }
+
+
+    .tool-display-icon{
+        position: relative;
+        top: -12px;
+        left: -12px;
+        width: 60px;
+        height: 60px;
+        background-size: 100%;
+        z-index: 1;
+        pointer-events: none;
+
+        img{
+            position: relative;
+            width: 64px;
+            height: 64px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 2px black), drop-shadow(0 0 2px black),
+        }
+    }
+
+    .tool-display-info{
+        border: 8px solid transparent;
+        border-image-slice: 21;
+        position: relative;
+        top: -50px;
+        left: 0px;
+        width: calc(100% - 10px);
+        height: 100px;
+        margin-top: -15px;
+        margin-bottom: -30px;
+        background-size: 100%;
+        cursor: pointer;
+
+        .tool-display-info-name{
+            position: relative;
+            text-align: center;
+            font-size: 22px;
+            top: 8px;
+            left: 45px;
+            width: calc(100% - 70px);
+            background-repeat: repeat;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,150,.2);
+            font-family: "IM Fell English", serif;
+
+            img{
+                width: 24px;
+                transform: translateX(3px) translateY(3px);
+                image-rendering: pixelated;
+                opacity: .8;
+            }
+        }
+
+        .tool-display-info-level{
+            position: absolute;
+            top: 36px;
+            left: calc(10px + 50%);
+            transform: translateX(-50%);
+            color: rgba(200,200,170,1);
+            font-size: 18px;
+            font-family: 'Calibri';
+            z-index: 10;
+            filter: drop-shadow(1px 1px 1px black) drop-shadow(0 0 3px black) drop-shadow(0 0 3px black);
+        }
+
+        .tool-display-info-upgrade{
+            position: absolute;
+            font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            bottom: 5px;
+            left: 5px;
+            width: calc(100% - 10px);
+            height: 35px;
+            color: rgb(200,200,200);
+            font-size: 14px;
+            text-align: center;
+
+            .upgrade-cost{
+                font-size: 16px;
+                font-weight: bold;
+                background-image: linear-gradient(#484314, #e6ff95);
+                background-repeat: repeat;
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-transform: uppercase;
+            }
+
+            b{
+                font-size: 16px;
+            }
+
+            i {
+                font-size: 12px;
+            }
+        }
+    }
+}

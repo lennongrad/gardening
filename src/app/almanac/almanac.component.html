@@ -1,42 +1,45 @@
 <div class="window" id="almanac-window" [class.active-window]="activeWindow"  style="border-image-source: url('assets/ui/frame.png');">
-    <div id="plant-list" class=" black-border-text">
-        <table>
-            <tr class="header-row">
-                <th></th>
-                <th (click)="clickSort('Name')">Name <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span></th>
-                <th (click)="clickSort('Family')">Family <span class='sorted-symbol'>{{getSortedSymbol('Family')}}</span></th>
-                <th (click)="clickSort('Pattern')">Pattern <span class='sorted-symbol'>{{getSortedSymbol('Pattern')}}</span></th>
-                <th (click)="clickSort('XP')" id="plant-header-xp">XP <span class='sorted-symbol'>{{getSortedSymbol('XP')}}</span></th>
-                <th (click)="clickSort(seed.seed.id)" class="seed-headers" *ngFor="let seed of getSeedTypes()">
-                    <span class='sorted-symbol'>{{getSortedSymbol(seed.seed.id)}}</span> <img [src]="'assets/items/' + seed.seed.icon">
-                </th>
-            </tr> <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span>
-            <tr *ngFor="let plant of getPlants(); index as i" (click)="clickPlant(plant)" [class.is-selected]="getSelectedPlant() == plant" 
-                [style]="getRowStyle(plant, i)">
-                <td class="plant-list-hovered"></td>
-                <td class="plant-list-name">{{plant.staticInfo.name}}</td>
-                <td class="plant-list-family">({{plant.staticInfo.family}})</td>
-                <td class="plant-list-seeds">
-                    <div class="seed-icon" *ngFor="let seed of getPatternSeeds(plant)">
-                        <img [src]="'assets/items/' + getSeedIcon(seed)">
-                    </div>
-                    <div class="seed-icon" *ngFor="let seed of getShadowSeeds(plant)">
-                        <img [src]="'assets/items/shadow_seed.png'">
-                    </div>
-                </td>
-                <td class="plant-list-xp">{{getXP(plant)}}</td>
-                <td class="plant-list-yield" *ngFor="let seed of getSeedTypes()">{{getSeedYields(plant, seed)}}</td>
-            </tr>
-        </table>
-        <div id="plant-description" *ngIf="getSelectedPlant() != null">
-            <h1 *ngIf="!getSelectedPlant()?.discovered">
-                Attempted Patterns 
-                <div class="tooltip-hover"> ? <div class="tooltip">
-                    If you harvest a viable plant while this menu is open, its pattern will be registered in the following table.
-                    <br><span id="example-orange">ORANGE</span>: This seed type appears somewhere in the plant's pattern, but not at that position.
-                    <br><span id="example-green">GREEN</span>: This seed type appears in the plant's pattern at that exact same position.
-                </div></div>
-            </h1>
+    <h1 style="background-image: url('assets/ui/name_frame_mid_ready.png')" class="information-header"><span class="header-title">Almanac</span></h1>
+    <div class="information-section" id="plant-list-holder">
+        <div id="plant-list" class=" black-border-text"  style="border-image-source: url('assets/ui/skill_frame.png');">
+            <table>
+                <tr class="header-row">
+                    <th></th>
+                    <th (click)="clickSort('Name')">Name <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span></th>
+                    <th (click)="clickSort('Family')">Family <span class='sorted-symbol'>{{getSortedSymbol('Family')}}</span></th>
+                    <th (click)="clickSort('Pattern')">Pattern <span class='sorted-symbol'>{{getSortedSymbol('Pattern')}}</span></th>
+                    <th (click)="clickSort('XP')" id="plant-header-xp">XP <span class='sorted-symbol'>{{getSortedSymbol('XP')}}</span></th>
+                    <th (click)="clickSort(seed.seed.id)" class="seed-headers" *ngFor="let seed of getSeedTypes()">
+                        <span class='sorted-symbol'>{{getSortedSymbol(seed.seed.id)}}</span> <img [src]="'assets/items/' + seed.seed.icon">
+                    </th>
+                </tr> <span class='sorted-symbol'>{{getSortedSymbol('Name')}}</span>
+                <tr *ngFor="let plant of getPlants(); index as i" (click)="clickPlant(plant)" [class.is-selected]="getSelectedPlant() == plant" 
+                    [style]="getRowStyle(plant, i)">
+                    <td class="plant-list-hovered"></td>
+                    <td class="plant-list-name">{{plant.staticInfo.name}}</td>
+                    <td class="plant-list-family">({{plant.staticInfo.family}})</td>
+                    <td class="plant-list-seeds">
+                        <div class="seed-icon" *ngFor="let seed of getPatternSeeds(plant)">
+                            <img [src]="'assets/items/' + getSeedIcon(seed)">
+                        </div>
+                        <div class="seed-icon" *ngFor="let seed of getShadowSeeds(plant)">
+                            <img [src]="'assets/items/shadow_seed.png'">
+                        </div>
+                    </td>
+                    <td class="plant-list-xp">{{getXP(plant)}}</td>
+                    <td class="plant-list-yield" *ngFor="let seed of getSeedTypes()">{{getSeedYields(plant, seed)}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <h1 style="background-image: url('assets/ui/name_frame_mid_ready.png')" *ngIf="getSelectedPlant() != null && !getSelectedPlant()?.discovered" class="information-header">
+        <span class="header-title">Research</span> <div class="tooltip-hover"> ? <div class="tooltip">
+        If you harvest a viable plant while this menu is open, its pattern will be registered in the following table.
+        <br><span id="example-orange">ORANGE</span>: This seed type appears somewhere in the plant's pattern, but not at that position.
+        <br><span id="example-green">GREEN</span>: This seed type appears in the plant's pattern at that exact same position.
+    </div></div></h1>
+    <div class="information-section" id="pattern-holder" *ngIf="getSelectedPlant() != null && !getSelectedPlant()?.discovered">
             <div id="plant-attempted-patterns" *ngIf="!getSelectedPlant()?.discovered">
                 <div *ngFor="let pattern of getAttemptedPatterns()" class="plant-attempted-pattern">
                     <div *ngFor="let step of pattern" class="plant-attempted-pattern-seed" [class.valid0]="step.validity == 0" [class.valid1]="step.validity == 1" [class.valid2]="step.validity == 2">
@@ -45,6 +48,5 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 </div>

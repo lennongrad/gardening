@@ -1,6 +1,58 @@
-#window-selector{
+#header{
     position: absolute;
     top: 0;
+    left: 175px;
+    width: 70vw;
+    height: 40px;
+    padding-left: 14px;
+    background-size: calc(100% + 5px) calc(100% + 10px);
+    background-position: -5px -5px;
+    filter: drop-shadow(1px 1px 3px black);
+    z-index: 10;
+
+    #header-border{
+        position: absolute;
+        top: -20px;
+        left: -10px;
+        width: calc(100% + 10px);
+        height: calc(100%);
+        border: 30px solid transparent;
+        border-image-slice: 34;
+        box-sizing: border-box;
+    }
+
+    #header-experience{
+        font-size: 20px;
+        line-height: 40px;
+        margin-left: 6px;
+        background-image: linear-gradient(#484314, #e6ff95);
+        background-repeat: repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        user-select: none;
+        cursor: pointer;
+
+        &:hover{
+            filter: brightness(1.2)
+        }
+
+        & b{
+            font-size: 26px;
+        }
+
+        & i{
+            margin-left: 4px;
+            font-style: normal;
+            font-family: "IM Fell English", serif;
+        }
+    }
+}
+
+#window-selector{
+    position: absolute;
+    top: -5px;
     left: 0;
     z-index: 10;
     background-color: black
@@ -12,24 +64,24 @@
 
 #window-selector-border{
     position: absolute;
-    top: -8%;
-    left: -7%;
-    width: 110%;
-    height: 116%;
-    border: 19px solid transparent;
+    top: -7%;
+    left: -12%;
+    width: 115%;
+    height: 118%;
+    border: 18px solid transparent;
     border-image-slice: 34;
     box-sizing: border-box;
     pointer-events: none;
 }
 
 .window-tab{
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 0 3px 3px 0px;
     background-color: brown;
     border: 9px solid transparent;
     border-image-slice: 43;
-    background-size: 114% 129%;
+    background-size: 52px 56px;
     background-position: -4px -8px;
     cursor: pointer;
     user-select: none;
@@ -47,8 +99,8 @@
         position: relative;
         top: 50%;
         left: 50%;
-        width: 50px;
-        height: 50px;
+        width: 32px;
+        height: 32px;
         transform: translate(-50%, -50%);
         filter: drop-shadow(2px 2px 2px black);
         opacity: .7;

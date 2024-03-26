@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { flush } from '@angular/core/testing';
-import { seedData, staticPlantData } from 'src/data/plants';
-import { PlantData, SaveablePlantData } from 'src/interfaces/plant';
+import { seedData } from 'src/data/plants';
+import { PlantData, SaveablePlantData, StaticPlantData } from 'src/interfaces/plant';
 import { PatternAttempt, Seed, SeedData } from 'src/interfaces/seed';
 import { SaveManagementService } from './save-management.service';
 import { SeedCombinationsService } from './seed-combinations.service';
@@ -19,25 +18,24 @@ export class AlmanacTrackerService {
 
   constructor(private seedCombinationService: SeedCombinationsService) {  }
 
-  initializePlantData(){
+  initializePlantData(staticPlantData: Array<StaticPlantData>){
     staticPlantData.forEach(data => {
       var pattern = ""
       
       var isRepeat = true
-      while(isRepeat){
-        var availableSeeds = []
-        for(var i = 0; i < data.patternSeeds.length; i++){
-          var matchingSeeds = seedData.filter(x => x.id == data.patternSeeds.charAt(i))
-          if(matchingSeeds.length == 1){
-            availableSeeds.push(matchingSeeds[0])
-          }
-        }
+      var availableSeeds = Array.from(data.patternSeeds)
+      var t = 0
 
+      while(isRepeat && t < 1000){
+        pattern = ""
         for(var i = 0; i < data.patternSize; i++){
-          pattern += availableSeeds[Math.floor(Math.random() * availableSeeds.length)].id
+          pattern += availableSeeds[Math.floor(Math.random() * availableSeeds.length)]
         }
-
         isRepeat = this.plantList.filter(plant => plant.pattern == pattern).length >= 1
+        t += 1
+      }
+      if(t > 100){
+        console.log("Too hard to generate pattern for " + data.name)
       }
 
       this.plantList.push({
@@ -141,12 +139,12 @@ export class AlmanacTrackerService {
     this.submitSeedPattern(this.combinationToPattern(flushedSeedCombination));    
   }
 
-  onNoSave(){
-    this.initializePlantData();
+  onNoSave(staticPlantData: Array<StaticPlantData>){
+    this.initializePlantData(staticPlantData);
   }
 
-  onLoadSave(savedPlantData: Array<SaveablePlantData>, savedFailedPatterns: Array<string>): boolean{
-    this.initializePlantData()
+  onLoadSave(staticPlantData: Array<StaticPlantData>, savedPlantData: Array<SaveablePlantData>, savedFailedPatterns: Array<string>): boolean{
+    this.initializePlantData(staticPlantData)
 
     var missingPlantData = false
     savedPlantData.forEach(plantData => {

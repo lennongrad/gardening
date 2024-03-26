@@ -7,12 +7,13 @@ import { TabWindow } from 'src/interfaces/window';
 export class WindowManagerService {
   windows: Array<TabWindow> = [
     {name: "Almanac", icon: "book-cover.svg"},
+    {name: "Store", icon: "light-bulb.svg"},
     {name: "Information", icon: "cog.svg"},
   ]
   activeWindow: TabWindow | null = null;
 
   constructor() {
-    this.selectWindow(this.windows[0])
+    this.selectWindow(this.windows[1])
   }
 
   getActiveWindow(): TabWindow | null{

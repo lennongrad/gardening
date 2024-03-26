@@ -1,12 +1,18 @@
+body{
+    overflow:hidden
+}
+
 .black-border-text{
     text-shadow: 1px 1px 2px black,  -1px -1px 2px black,  1px -1px 2px black,  -1px 1px 2px black, 1px 1px 2px black,  -1px -1px 2px black,  1px -1px 2px black,  -1px 1px 2px black;
 }
 
 .window{
     min-width: 350px;
-    height: 82vh;
+    height: 90vh;
     position: absolute;
-    top: 13vh;
+    top: -2vh;
+    padding-top: 70px;
+    padding-bottom: 2vh;
     transition: left .3s;
     background-color: green;
     border: 14px solid transparent;
@@ -26,7 +32,8 @@
 
 
 .tooltip-hover{
-    font-family: 'Courier';
+    position: relative;
+    font-family: 'Courier' !important;
     display: inline-block;
     width: 10px;
     height: 10px;
@@ -48,8 +55,7 @@
     }
 
     .tooltip{
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        opacity: 0;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
         position: absolute;
         width: 250px;
         background-color: #444;
@@ -64,7 +70,79 @@
         line-height: normal;
         pointer-events: none;
         transform-origin: 50% 100%;
+        opacity: 0;
         transform: translateX(-50%) scaleY(0);
     }
 
+}
+
+
+.action-button{
+    display: block;
+    padding: 10px 8px 8px 8px;
+    margin: auto;
+    font-size: 18px;
+    background-size: 108% 108%;
+    background-color: transparent;
+    border: none;
+    color: rgba(254,231,214,.9);
+    cursor: pointer;
+    box-shadow: 2px 2px 2px black;
+    font-family: "IM Fell English", serif;
+
+    &:hover{
+        filter: brightness(.9);
+        transform: translateY(1px)
+    }
+    &:active{
+        filter: brightness(.8);
+        transform: translateY(3px)
+    }
+}
+
+.information-section{
+    padding: 60px 20px 20px 20px;
+}
+
+.information-header{
+    position: relative;
+    z-index:1;
+    padding: 2px;
+    width: 60%;
+    height: 55px;
+    background-size: 100% 100%;
+    margin: 12px 0px -40px 10px;
+    text-align: center;
+    line-height: 55px;
+    color: rgba(255, 255, 200, 0.6);
+    font-family: "DM Serif Display", serif;
+    user-select: none;
+
+    .header-title{
+        text-transform: uppercase;
+        letter-spacing: 4px;
+    }
+
+    &:hover{
+        filter: brightness(1.2)
+    }
+
+}
+
+
+
+::-webkit-scrollbar {
+    background-color: rgba(0,0,0,.3);
+    width: 9px;
+    height: 6px;
+    box-shadow: 0px 0px 3px black inset;
+    border-bottom: 1px black;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(200,200,255, .2);
+    border-radius: 17px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    pointer-events: none;
 }

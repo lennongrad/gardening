@@ -1,0 +1,20 @@
+<div class="window" id="store-window" [class.active-window]="activeWindow"  style="border-image-source: url('assets/ui/frame.png');">
+    <h1 style="background-image: url('assets/ui/name_frame_mid_ready.png')" class="information-header">Skills</h1>
+    <div class="information-section" id="tools-holder">
+        <div class="tool-display" *ngFor="let tool of getTools()"  [class.can-afford]="canAfford(tool)">
+            <div class="tool-display-icon" style="background-image: url('assets/ui/round.png')">
+                <img [src]="'assets/items/tools/f' + getToolIcon(tool) + '.png'">
+            </div>
+            <div class="tool-display-info" style="background-image: url('assets/ui/big_bar_bg.png'); border-image-source: url('assets/ui/skill_frame.png')"  
+                (click)="upgradeTool(tool)" (contextmenu)="downgradeTool(tool)">
+                <div class="tool-display-info-name" [style.background-image]="getToolGradient(tool)"><span>{{getToolName(tool)}}</span><img src="assets/ui/checkbox.png" *ngIf="canAfford(tool)"></div>
+                <div class="tool-display-info-level">LEVEL {{getToolLevel(tool)}}</div>
+                <div class="tool-display-info-upgrade" *ngIf="!getToolMaxed(tool)">{{getVerb(tool)}} <span class="upgrade-cost">
+                    {{getToolXPCost(tool)}}</span> for <b>{{getToolBonus(tool)}}</b> {{getToolUsage(tool)}}. <i>(current {{getToolCurrentValue(tool)}})</i>
+                </div> 
+                <div class="tool-display-info-upgrade" *ngIf="getToolMaxed(tool)">Maximized {{getToolUsage(tool)}}.<br><i>(current {{getToolCurrentValue(tool)}})</i>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@
     <div class="tool" *ngFor="let tool of getTools()" (click)="clickTool(tool)" [class.selected-tool]="tool == getSelectedTool()" [ngStyle]="getToolStyle(tool)">
         <!--<img class="tool-filter" [src]="'assets/items/tools/f' + tool.tool.iconIndex + '.png'">--->
         <div class="tool-filter" *ngIf="isCooldown(tool)" [style]="getMaskImageStyle(tool)"></div>
-        <img class="tool-image"  [src]="'assets/items/tools/f' + tool.tool.iconIndex + '.png'">
+        <img class="tool-image"  [src]="'assets/items/tools/f' + getToolIcon(tool) + '.png'">
         <div class="cog-icon"  *ngIf="isCooldown(tool)">{{getCooldownRemaining(tool)}}</div>
     </div>
 </div>
