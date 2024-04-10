@@ -181,11 +181,7 @@ export class AlmanacComponent implements OnInit {
   }
 
   clickPlant(plant: PlantData){
-    if(this.almanacTrackerService.selectedPlant == plant){
-      this.almanacTrackerService.selectedPlant = null
-    } else {
-      this.almanacTrackerService.selectedPlant = plant
-    }
+    this.almanacTrackerService.selectPlant(plant)
   }
 
 }

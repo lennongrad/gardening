@@ -56,7 +56,8 @@ export interface CollectedItemAnimation {
 }
 
 export interface SaveableInventory{
-    experience: number
+    experience: number, 
+    money: number
 }
 
 export interface QuestData{
@@ -73,6 +74,13 @@ export interface QuestData{
 
 export interface Quest{
     questData: QuestData,
+    seenTriggers: Array<string>,
+    completed: boolean,
+    active: boolean
+}
+
+export interface SaveableQuest{
+    questDataID: number,
     seenTriggers: Array<string>,
     completed: boolean,
     active: boolean

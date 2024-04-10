@@ -2,7 +2,83 @@
 #credits{
     background-color: rgba(30,0,0,.4);
     color: rgba(255,255,255,.7);
+    line-height: 24px;
+    font-size: 20px;
+
+    a{
+        font-weight: bold;
+        margin-right: 8px;
+        margin-left: -2px;
+        text-decoration: none;
+    }
+
+    .use{
+        font-size: 16px;
+    }
+
+    .afternote{
+        display: block;
+        margin-top: 12px;
+        font-size: 15px;
+
+        a{
+            margin: 2px;
+        }
+    }
+
+    a:hover{
+        text-decoration: underline;
+    }
 }
 #options{
-    background-color: rgba(0,30,0,.4)
+    background-color: rgba(0,30,0,.4);
+    text-align: center;
+}
+
+.action-button{
+    &.toggle{
+        padding-left: 20px;
+        padding-right: 10px;
+    }
+    .checkbox{
+        display: inline-block;
+        width: 25px;
+        height: 20px; 
+        vertical-align: middle;
+
+        &:not(.active-checkbox){
+            img{
+                filter: brightness(0);
+            }
+        }
+        
+        img{
+            width: 25px;
+            height: 20px;
+            vertical-align: middle;
+            transform: translateY(-2px)
+        }
+    }
+}
+
+#etc-section{
+    color: white;
+    padding: 8px;
+    line-height: 26px;
+    text-align: center;
+
+    a{
+        margin-left: 6px;
+        color: rgb(129, 156, 54);
+        text-decoration: none;
+
+        &:hover{
+            filter: brightness(1.2)
+        }
+    }
+
+    .line{
+        border-right: 1px solid white;
+        margin: 4px;
+    }
 }

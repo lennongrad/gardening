@@ -1,7 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, DebugElement, HostListener, OnInit } from '@angular/core';
 import { SeedCombinationsService } from '../seed-combinations.service';
 import { Tool } from 'src/interfaces/seed';
 import { GrowingPlantsService } from '../growing-plants.service';
+import { DebugService } from '../debug.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,7 +16,8 @@ export class ToolbarComponent implements OnInit {
 
   constructor(
     private seedCombinationService: SeedCombinationsService,
-    private growingPlantsService: GrowingPlantsService) { }
+    private growingPlantsService: GrowingPlantsService,
+    private debugService: DebugService) { }
 
   ngOnInit(): void {
   }
@@ -89,7 +91,6 @@ export class ToolbarComponent implements OnInit {
       "left": this.mousePositionX + "px",
     }
   }
-
   
   @HostListener("window:mousemove", ["$event"])
   onMouseMove(event: MouseEvent){
@@ -110,12 +111,25 @@ export class ToolbarComponent implements OnInit {
 
   @HostListener("window:keydown.m")
   onMKeyDown(){
-    this.seedCombinationService.cheatToolTimes()
+    if(this.debugService.getDebugSetting("allowShortcuts")){
+      this.seedCombinationService.cheatToolTimes()
+    }
   }
 
   @HostListener("window:keydown.v")
   onVKeyDown(){
-    this.seedCombinationService.experience = (this.seedCombinationService.experience + 1) * 10
+    if(this.debugService.getDebugSetting("allowShortcuts")){
+      this.seedCombinationService.gainExperience((this.seedCombinationService.experience + 1) * 10)
+    }
+  }
+
+  @HostListener("window:keydown.h")
+  onHKeyDown(){
+    if(this.debugService.getDebugSetting("allowShortcuts")){
+      this.seedCombinationService.seeds.forEach(seed => {
+        this.seedCombinationService.gainSeed(seed.seed, 10)
+      })
+    } 
   }
 
   @HostListener("window:keydown.control")

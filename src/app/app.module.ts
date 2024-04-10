@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { API_KEY, GoogleSheetsDbService } from 'ng-google-sheets-db';
 import { StoreComponent } from './store/store.component';
 import { TutorialManagerComponent } from './tutorial-manager/tutorial-manager.component';
+import { ShopComponent } from './shop/shop.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { TutorialManagerComponent } from './tutorial-manager/tutorial-manager.co
     InformationComponent,
     WindowSelectorComponent,
     StoreComponent,
-    TutorialManagerComponent
+    TutorialManagerComponent,
+    ShopComponent
   ],
   imports: [
     BrowserModule,

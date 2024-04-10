@@ -4,5 +4,6 @@
         <div class="tool-filter" *ngIf="isCooldown(tool)" [style]="getMaskImageStyle(tool)"></div>
         <img class="tool-image"  [src]="'assets/items/tools/f' + getToolIcon(tool) + '.png'">
         <div class="cog-icon"  *ngIf="isCooldown(tool)">{{getCooldownRemaining(tool)}}</div>
+        <div class="tool-id">{{tool.tool.id + 1}}</div>
     </div>
 </div>

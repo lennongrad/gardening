@@ -53,13 +53,12 @@
         transform: scale(1.1);
     }
 
-    .dirt-exp{
+    .dirt-money, .dirt-exp{
         position: absolute;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         font-size: 24px;
-        background-image: linear-gradient(#484314, #e6ff95);
         background-repeat: repeat;
         -webkit-background-clip: text;
         background-clip: text;
@@ -72,6 +71,18 @@
         span{
             font-size: 16px;
         }
+    }
+
+    .dirt-money{
+        background-image: linear-gradient(#14481f, #1ea346);
+        
+        span{
+            font-size: 22px;
+        }
+    }
+
+    .dirt-exp{
+        background-image: linear-gradient(#484314, #e6ff95);
     }
 
     &.selected-dirt{

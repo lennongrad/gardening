@@ -7,7 +7,8 @@ export const PlantMapping = {
   patternSeeds: "Seeds",
   resultSeeds: "Result",
   growthCyclesAdjustment: "GCA",
-  experience: "XP"
+  experience: "XP",
+  price: "Price"
 }
 
 export interface LoadedPlantData {
@@ -19,7 +20,8 @@ export interface LoadedPlantData {
     resultSeeds: string,
     spriteIndex: number,
     family: string,
-    experience: number
+    experience: number,
+    price: number
 }
 
 export interface StaticPlantData {
@@ -31,7 +33,8 @@ export interface StaticPlantData {
     resultSeeds: Record<string, number>,
     spriteIndex: number,
     family: string,
-    experience: number
+    experience: number,
+    price: number
 }
 
 export interface PlantData {
@@ -74,7 +77,9 @@ export interface Dirt{
     x: number,
     y: number,
     xpValue?: number,
-    xpAnimation?: number
+    xpAnimation?: number,
+    moneyValue?: number,
+    moneyAnimation?: number
 }
 
 export interface SaveableDirt{

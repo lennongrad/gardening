@@ -43,6 +43,7 @@ export class StoreComponent implements OnInit {
       case 1: return "+1";
       case 2: return "+1.25";
       case 3: return "+5%";
+      case 4: return "+5%";
     }
     return "???"  
   }
@@ -53,6 +54,7 @@ export class StoreComponent implements OnInit {
       case 1: return "maximum seed per planted pattern";
       case 2: return "seconds of water per use";
       case 3: return "chance of harvesting extra seeds";
+      case 4: return "increase in plant sell rate"
     }
     return "???"  
   }
@@ -62,7 +64,8 @@ export class StoreComponent implements OnInit {
       case 0: return "time: " + (this.seedCombinationService.getMaxTimerTool(tool)/1000).toString() + " seconds";
       case 1: return "pattern length: " + (this.seedCombinationService.getToolStrength(tool)).toString() + (this.seedCombinationService.getToolStrength(tool) == 1 ? " seed" : " seeds");
       case 2: return "time: " + (this.seedCombinationService.getToolStrength(tool)/4).toString() + " seconds";
-      case 3: return "chance: " + (this.seedCombinationService.getToolStrength(tool)*100).toString() + "%";
+      case 3: return "chance: " + (Math.floor(this.seedCombinationService.getToolStrength(tool)*100)).toString() + "%";
+      case 4: return "rate: +" + (Math.floor(this.seedCombinationService.getToolStrength(tool)*100)).toString() + "%";
     }
     return "value: ???"  
   }

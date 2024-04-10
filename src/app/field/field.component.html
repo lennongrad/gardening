@@ -3,11 +3,12 @@
     <div id="background" (mousedown)="onBackgroundMouseDown()"></div>
     <div id="dirt-spots">
         <div class="dirt" *ngFor="let dirt of getDirtSpots()" [ngStyle]="getDirtStyle(dirt)" [class.selected-dirt]="dirt == getSelectedDirt()">
-            <div class="dirt-background-blurry"  style="background-image: url(assets/dirt.jpg)"></div>
-            <div class="dirt-background"  style="background-image: url(assets/dirt.jpg)"
+            <div class="dirt-background-blurry"  style="background-image: url(assets/dirt2.png)"></div>
+            <div class="dirt-background"  style="background-image: url(assets/dirt2.png)"
                 (click)="onMouseDownDirt(dirt)"  (mouseenter)="onMouseEnterDirt(dirt)" (mouseexit)="onMouseExitDirt(dirt)"></div>
             <app-plant [plant]="getPlant(dirt)"></app-plant>
             <div class="dirt-exp" [ngStyle]="getEXPStyle(dirt)">+{{dirt.xpValue}} <span>EXP.</span></div>
+            <div class="dirt-money" [ngStyle]="getMoneyStyle(dirt)">+ <span>$</span>{{getMoneyValue(dirt)}}</div>
         </div>
     </div>
     <div id="prospective-dirt-spots" *ngIf="getHoeing()">

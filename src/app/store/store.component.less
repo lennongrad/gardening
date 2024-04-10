@@ -1,3 +1,12 @@
+
+@keyframes wiggle {
+    0% { transform:  translateX(3px) translateY(3px) rotate(0deg) scale(1.0)  }
+    25% { transform: translateX(3px) translateY(3px)  rotate(5deg) scale(1.2) }
+    50% { transform: translateX(3px) translateY(3px)  rotate(0deg) scale(1.0) }
+    75% { transform: translateX(3px) translateY(3px) rotate(-5deg) scale(1.2) }
+    100% { transform: translateX(3px) translateY(3px) rotate(0deg) scale(1.0) }
+}
+
 #store-window{
     overflow-y: scroll;
     min-width: 400px;
@@ -47,7 +56,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             image-rendering: pixelated;
-            filter: drop-shadow(0 0 2px black), drop-shadow(0 0 2px black),
+            filter: drop-shadow(0 0 2px black), drop-shadow(0 0 2px black)
         }
     }
 
@@ -82,9 +91,13 @@
 
             img{
                 width: 24px;
+                height: 24px;
                 transform: translateX(3px) translateY(3px);
                 image-rendering: pixelated;
                 opacity: .8;
+                filter: drop-shadow(0 0 1px #333);
+                animation: 2s wiggle infinite;
+                transform-origin: 50% 100%;
             }
         }
 

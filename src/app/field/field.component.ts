@@ -83,6 +83,27 @@ export class FieldComponent implements OnInit {
     }
   }
 
+  getMoneyValue(dirt: Dirt): string{
+    if(dirt.moneyValue == null){
+      return ""
+    }
+    return this.seedCombinationService.getPrettyNumber(dirt.moneyValue);
+  }
+
+  getMoneyStyle(dirt: Dirt): Record<string,any>{
+    if(dirt.moneyValue == undefined || dirt.moneyAnimation == undefined){
+      return {"display": "none"}
+    }
+
+    var percentageThrough = (100 - dirt.moneyAnimation) / 100
+
+    return {
+      "bottom": (1 - Math.pow(Math.pow(percentageThrough, 2) - 1, 2)) * this.growingPlantsService.dirtHeight + "px",
+      "transform": "translateX(-50%) scale(" + (1.5 - Math.abs(dirt.moneyAnimation - 60) / 100)  +  ")",
+      "opacity": Math.pow(1 - percentageThrough, .75)
+    }
+  }
+
   getHoeing(): boolean{
     if(this.seedCombinationService.selectedTool == null){
       return false;
@@ -125,6 +146,7 @@ export class FieldComponent implements OnInit {
     } else {
       this.growingPlantsService.selectedDirt = dirt;
     }
+    this.growingPlantsService.clickDirt(dirt)
   }
 
   onMouseEnterDirt(dirt: Dirt){

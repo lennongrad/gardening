@@ -33,7 +33,8 @@ export class DataLoaderService {
           patternSeeds: plantData.patternSeeds,
           resultSeeds: resultSeeds,
           growthCyclesAdjustment: plantData.growthCyclesAdjustment,
-          experience: Number(plantData.experience)
+          experience: Number(plantData.experience),
+          price: Number(plantData.price)
         })
       })
 

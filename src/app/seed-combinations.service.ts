@@ -27,6 +27,7 @@ export class SeedCombinationsService {
   lastTimestamp = 0
 
   experience: number = 0
+  money: number = 0
 
   constructor(private questSevice: QuestService) {
     /*
@@ -39,6 +40,25 @@ export class SeedCombinationsService {
 
   gainExperience(increase: number){
     this.experience += increase
+
+    this.tools.forEach(tool => {
+      if(this.experience >= this.getToolEXPCost(tool)){
+        this.questSevice.registerTrigger("canAfford" + tool.tool.name)
+      }
+    })
+
+    return increase
+  }
+
+  gainMoney(increase: number){
+    this.money += increase
+
+    /*this.tools.forEach(tool => {
+      if(this.money >= this.getToolEXPCost(tool)){
+        this.questSevice.registerTrigger("canAfford" + tool.tool.name)
+      }
+    })*/
+
     return increase
   }
 
@@ -62,8 +82,9 @@ export class SeedCombinationsService {
   useTool(tool: Tool){
     tool.timer = this.getMaxTimerTool(tool)
 
-    if(tool == this.selectedTool && (tool.timer > 0 || !this.holdingControl)){
+    if(tool == this.selectedTool && (tool.timer > 0 || (!this.holdingControl && this.saveManagementService.getSetting("holdControl")))){
       this.selectedTool = null
+      console.log("H")
     }
 
     this.questSevice.registerTrigger("use" + tool.tool.name)
@@ -90,14 +111,25 @@ export class SeedCombinationsService {
 
   getPrettyNumber(number: number): string{
     var total = ""
-    var remaining = number.toString()
+    var remaining = Math.floor(number).toString()
+    var decimal = Math.floor(100 * (number - Math.floor(number))).toString()
 
     while(remaining.length > 3){
       total = remaining.slice(-3) + "," + total
       remaining = remaining.slice(0,-3)
     }
 
-    return (remaining + "," + total).slice(0,-1)
+    total = (remaining + "," + total).slice(0,-1)
+
+    if(decimal != "0"){
+      if(decimal.length == 1){
+        total += ".0" + decimal
+      } else {
+        total += "." + decimal
+      }
+    }
+
+    return total
   }
 
   getToolEXPCost(tool: Tool): number{
@@ -109,6 +141,7 @@ export class SeedCombinationsService {
       case 1: return tool.level + 1;
       case 2: return (tool.level + 1) * 5;
       case 3: return (tool.level) * .05;
+      case 4: return (tool.level) * .05;
     }
     return 0;
   }
@@ -214,6 +247,14 @@ export class SeedCombinationsService {
     })
 
     this.collectedItemAnimations = this.collectedItemAnimations.filter(item => item.time < this.collectedItemMaxTime)
+
+    this.tools.forEach(tool => {
+      for(var i = 0; i < 9; i++){
+        if(i < tool.level){
+          this.questSevice.registerAchievement(tool.tool.name.toLowerCase() + "Level" + (i+2).toString())
+        }
+      }
+    })
   }
 
   toolTimerTick(timeStamp: number){
@@ -269,6 +310,7 @@ export class SeedCombinationsService {
     }
 
     this.experience = Number(savedInventory.experience)
+    this.money = Number(savedInventory.money)
 
     return true;
   }

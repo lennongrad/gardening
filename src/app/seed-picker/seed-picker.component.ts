@@ -1,5 +1,5 @@
 import { ThisReceiver } from '@angular/compiler';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { SeedData, Seed } from 'src/interfaces/seed';
 import { SeedCombinationsService } from '../seed-combinations.service';
 import { GrowingPlantsService } from '../growing-plants.service';
@@ -16,11 +16,15 @@ interface SubmissionText {top: string, bottom: string, tooltip: string, color: s
 export class SeedPickerComponent implements OnInit {
   selectedSeeds: Array<null | SeedData> = [];
   seedAmount = 1;
+  mainDiv!: ElementRef
 
   constructor(
+    private elementReference: ElementRef, 
     private seedCommbinationService: SeedCombinationsService, 
     private growingPlantsService: GrowingPlantsService,
-    private almanacTrackerService: AlmanacTrackerService) { }
+    private almanacTrackerService: AlmanacTrackerService) {
+      this.mainDiv = elementReference.nativeElement.children[0]
+  }
 
   ngOnInit(): void {
     this.updateSeedAmount();
@@ -40,7 +44,8 @@ export class SeedPickerComponent implements OnInit {
       "opacity": 1,
       "left": this.growingPlantsService.getDirtPosition(this.growingPlantsService.selectedDirt)[0] + 30 + "px",
       "top": this.growingPlantsService.getDirtPosition(this.growingPlantsService.selectedDirt)[1] - 30  + "px",
-      "width": (Math.max(this.selectedSeeds.length, this.getSeedOptions().length, 4) * 50 + 60) + "px"
+      "width": (Math.max(this.selectedSeeds.length, this.getSeedOptions().length, 4) * 50 + 60) + "px",
+      "transform": (this.growingPlantsService.getDirtPosition(this.growingPlantsService.selectedDirt)[1]) < 250 ? "translate(-50%, 60%)" : ""
     }
   }
   

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TabWindow } from 'src/interfaces/window';
 import { WindowManagerService } from '../window-manager.service';
 import { SeedCombinationsService } from '../seed-combinations.service';
+import { QuestService } from '../quest.service';
 
 @Component({
   selector: 'app-window-selector',
@@ -17,6 +18,9 @@ export class WindowSelectorComponent implements OnInit {
 
   getExperience(): string{
     return this.seedCombinationService.getPrettyNumber(this.seedCombinationService.experience)
+  }
+  getMoney(): string{
+    return this.seedCombinationService.getPrettyNumber(this.seedCombinationService.money)
   }
 
 

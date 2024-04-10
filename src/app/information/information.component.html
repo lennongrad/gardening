@@ -1,10 +1,26 @@
 <div id="information-window" class="window black-border-text" [class.active-window]="activeWindow" style="border-image-source: url('assets/ui/frame.png');">
     <h1 style="background-image: url('assets/ui/name_frame_mid_ready.png')" class="information-header"><span class="header-title">OPTIONS</span></h1>
     <div class="information-section" id="options">
+        <button class="action-button  black-border-text" style="background-image: url('assets/ui/long_button.png')" (click)="skipAllTutorials()">Skip Tutorials</button>
         <button class="action-button  black-border-text" style="background-image: url('assets/ui/long_button.png')" (click)="clearSave()">Clear Save</button>
+        <div id="toggles">
+            <button class="action-button black-border-text toggle" style="background-image: url('assets/ui/long_button.png')" (click)="toggleOption('holdControl')">
+                Unselect Tool Automatically <div class="checkbox" [class.active-checkbox]="activeOption('holdControl')"><img src="assets/ui/Mini_arrow_bot.png" ></div>
+            </button>
+        </div>
     </div>
     <h1 style="background-image: url('assets/ui/name_frame_mid_ready.png')" class="information-header"><span class="header-title">CREDITS</span></h1>
     <div class="information-section" id="credits">
-        Many thanks to Blue!
+        <a href="https://assetstore.unity.com/publishers/38930" target="_blank">PONETI</a> <span class="use">(UI graphics)</span><br>
+        <a href="https://lorcblog.blogspot.com/" target="_blank">Lorc</a> <span class="use">(SVG icons)</span><br>
+        <a href="https://clockworkraven.itch.io/raven-fantasy-hd-rpg-icons-pixel-art-icons-textures-and-sprites-farm-and-gen" target="_blank">Clockwork Raven Studios</a><a target="_blank" href="https://www.instagram.com/manowellplayed/">+ Manowell</a> <span class="use">(tool icons)</span>
+        <br><a href="https://orteil.dashnet.org/" target="_blank">Orteil</a> <span class="use">(inspiration)</span>
+        <br><a href="https://architextures.org/" target="_blank">Architextures</a> <span class="use">(grass texture)</span>
+
+        <span class="afternote">Go to <a href="https://game-icons.net/">game-icons.net</a> for free icons.</span>
+    </div>
+
+    <div id="etc-section">
+        Version {{getBuild()}} <span class="line"></span> <a href="http://lennongrad.com">lennongrad.com</a>
     </div>
 </div>

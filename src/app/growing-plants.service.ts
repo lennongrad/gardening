@@ -5,6 +5,7 @@ import { SeedCombinationsService } from './seed-combinations.service';
 import { SaveManagementService } from './save-management.service';
 import { SeedData, Tool } from 'src/interfaces/seed';
 import { QuestService } from './quest.service';
+import { DebugService } from './debug.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,7 @@ export class GrowingPlantsService {
   constructor(
     private alamancTrackerService: AlmanacTrackerService, 
     private seedCombinationService: SeedCombinationsService,
+    private debugService: DebugService,
     private questService: QuestService) { 
       seedCombinationService.growingPlantsService = this;
   }
@@ -96,6 +98,10 @@ export class GrowingPlantsService {
     this.redefineProspective()
   }
 
+  clickDirt(dirt: Dirt){
+    this.questService.registerTrigger("clickDirt")
+  }
+
   getPlantName(plant: Plant): string{
     if(plant.cycles < this.getMaxCycles(plant) / 2 && (plant.plantData == null || !plant.plantData.discovered)){
       return "Sprout"
@@ -132,9 +138,10 @@ export class GrowingPlantsService {
   }
 
   makePlant(pattern: string, dirt: Dirt){
+    var plantData = this.alamancTrackerService.checkSeedPattern(pattern)
     var newPlant: Plant = {
       dirt: dirt,
-      plantData: this.alamancTrackerService.checkSeedPattern(pattern), 
+      plantData: plantData, 
       plantedPattern: pattern, 
       cycles: 0, 
       waterCycles: 0,
@@ -142,6 +149,18 @@ export class GrowingPlantsService {
     };
 
     this.plants.push(newPlant);
+
+    this.questService.registerTrigger("plant")
+    this.questService.registerTrigger("plantPattern" + pattern.length)
+    if(plantData == null){
+      this.questService.registerTrigger("plantInviable")
+    }else{
+      this.questService.registerTrigger("plantName" + plantData.staticInfo.name)
+
+      if(plantData.discovered){
+        this.questService.registerTrigger("plantDiscovered")
+      }
+    }
   }
 
   clickPlant(plant: Plant){
@@ -160,6 +179,14 @@ export class GrowingPlantsService {
         plant.dirt.xpValue = gainedExperience
         plant.dirt.xpAnimation = 100
       }
+    } else if (this.seedCombinationService.selectedTool.tool.id == 4){
+      var gainedMoney = this.sellPlant(plant, this.seedCombinationService.selectedTool)
+      this.seedCombinationService.useTool(this.seedCombinationService.selectedTool)
+
+      if(gainedMoney != null){
+        plant.dirt.moneyValue = gainedMoney
+        plant.dirt.moneyAnimation = 100
+      }
     }
   }
 
@@ -176,6 +203,33 @@ export class GrowingPlantsService {
     return results
   }
 
+  sellPlant(plant: Plant, tool: Tool): number | null{
+    var dirtPosition = [plant.dirt.x * this.dirtWidth, plant.dirt.y * this.dirtHeight]
+
+    if(plant.plantData == null){
+      if(this.isInviable(plant)){
+        this.plants = this.plants.filter(x => x != plant)
+      }
+      this.questService.registerTrigger("sellInviable")
+      return null
+    }
+
+    if(plant.cycles < this.getMaxCycles(plant)){
+      return null
+    }
+
+    this.plants = this.plants.filter(x => x != plant)
+    var shearAccuracy = 1 + this.seedCombinationService.getToolStrength(tool)
+
+    var gainedMoney: number = this.seedCombinationService.gainMoney(plant.plantData.staticInfo.price * shearAccuracy)
+
+    this.questService.registerTrigger("sellPlant")
+    this.questService.registerTrigger("sellPlantPattern" + plant.plantData.pattern.length.toString())
+    this.questService.registerTrigger("sellPlant" + plant.plantData.staticInfo.id)
+
+    return gainedMoney
+  }
+
   harvestPlant(plant: Plant, tool: Tool): number | null{
     var dirtPosition = [plant.dirt.x * this.dirtWidth, plant.dirt.y * this.dirtHeight]
 
@@ -184,6 +238,7 @@ export class GrowingPlantsService {
         this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
         this.plants = this.plants.filter(x => x != plant)
       }
+      this.questService.registerTrigger("harvestInviable")
       return null
     }
 
@@ -217,6 +272,10 @@ export class GrowingPlantsService {
     plant.plantData.discovered = true
     this.alamancTrackerService.submitSeedPattern(plant.plantedPattern);
     var gainedExperience: number = this.seedCombinationService.gainExperience(plant.plantData.staticInfo.experience)
+
+    this.questService.registerTrigger("harvestPlant")
+    this.questService.registerTrigger("harvestPlantPattern" + plant.plantData.pattern.length.toString())
+    this.questService.registerTrigger("harvestPlant" + plant.plantData.staticInfo.id)
 
     return gainedExperience
   }
@@ -252,6 +311,13 @@ export class GrowingPlantsService {
           dirt.xpAnimation = undefined
         }
       }
+      if(dirt.moneyValue != undefined && dirt.moneyAnimation != undefined){
+        dirt.moneyAnimation -= 1
+        if(dirt.moneyAnimation <= 0){
+          dirt.moneyValue = undefined
+          dirt.moneyAnimation = undefined
+        }
+      }
     })
   }
 
@@ -269,12 +335,23 @@ export class GrowingPlantsService {
         plant.waterCycles -= 1
         plant.cycles += 1
 
+        if(plant.cycles == Math.floor(this.getMaxCycles(plant) / 2)){
+          if(plant.plantData == null){
+            this.questService.registerTrigger("showInviable")
+          } else {
+            this.questService.registerTrigger("show" + plant.plantData.staticInfo.name)
+            this.questService.registerTrigger("showPattern" + plant.plantData.pattern.length.toString())
+          }
+        }
+
         if(plant.cycles == this.getMaxCycles(plant)){
           this.questService.registerTrigger("plantMaxxed")
         }
       }
     })
 
-    this.saveManagementService.saveGame()
+    if(!this.debugService.getDebugSetting("dontSave")){
+      this.saveManagementService.saveGame()
+    }
   }
 }

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { seedData } from 'src/data/plants';
-import { PlantData, SaveablePlantData, StaticPlantData } from 'src/interfaces/plant';
+import { Plant, PlantData, SaveablePlantData, StaticPlantData } from 'src/interfaces/plant';
 import { PatternAttempt, Seed, SeedData } from 'src/interfaces/seed';
 import { SaveManagementService } from './save-management.service';
 import { SeedCombinationsService } from './seed-combinations.service';
+import { QuestService } from './quest.service';
+import { DebugService } from './debug.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,10 @@ export class AlmanacTrackerService {
 
   selectedPlant: PlantData | null = null;
 
-  constructor(private seedCombinationService: SeedCombinationsService) {  }
+  constructor(
+    private seedCombinationService: SeedCombinationsService,
+    private questService: QuestService,
+    private debugService: DebugService) {  }
 
   initializePlantData(staticPlantData: Array<StaticPlantData>){
     staticPlantData.forEach(data => {
@@ -46,7 +51,23 @@ export class AlmanacTrackerService {
       })
     })
 
-    console.log(this.plantList);
+    if(this.debugService.getDebugSetting("printPlantList")){
+      console.log(this.plantList);
+    }
+  }
+
+  selectPlant(plant: PlantData){
+    if(this.selectedPlant == plant){
+      this.selectedPlant = null
+    } else {
+      this.selectedPlant = plant
+      this.questService.registerTrigger("clickAlmanacPlant")
+      if(plant.discovered){
+        this.questService.registerTrigger("clickAlmanacPlantDiscovered")
+      }else{
+        this.questService.registerTrigger("clickAlmanacPlantUndiscovered")
+      }
+    }
   }
 
   combinationToPattern(seedCombination: Array<SeedData>): string{
@@ -128,8 +149,9 @@ export class AlmanacTrackerService {
     if(seedResult == null){
       this.failedCombinations.add(seedCombination);
     } else if(this.selectedPlant != null) {
-      if(!this.selectedPlant.attemptedPatterns.includes(seedCombination)){
+      if(!this.selectedPlant.attemptedPatterns.includes(seedCombination) && !this.selectedPlant.discovered){
         this.selectedPlant.attemptedPatterns.push(seedCombination)
+        this.questService.registerTrigger("researchPlant")
       }
     }
   }
